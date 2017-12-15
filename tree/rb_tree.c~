@@ -1,0 +1,160 @@
+#include "rb_tree.h"
+#include <stdlib.h>
+
+rbtree rb_init(void) {
+	rbtree init = malloc(sizeof(*init));
+	init->root = NULL;
+}
+/* Black Red tree keeps five property which show good time complexity */
+
+/* Left-Rotate */
+int left_rotate(rbtree tree, rbnode x) {
+
+	y = x->rsubtr;
+	/* For easy to understand */
+	//alpha = x->lsubtr;	/*leave unchanged */
+	beta  = y->lsubtr;	/* switch to x->rsubtr */
+	//gamma  = y->rsubtr;	/* leave unchanged */
+	
+	/* change for beta */
+	x->rsubtr = beta;
+	if(beta)
+		beta->parent = x;
+	/****/
+
+	y->parent = x->parent;
+	/* check if x is the root */
+	if(!(x->parent))
+		tree->root = y;
+	/*check  if x is the left son of the right */
+       	else if(x == x->parent->lsubtr)
+		x->parent->lsubtr = y;
+	else
+		x->parent->rsubtr = y;
+
+	y->lsubtr = x;
+	x->parent = y;
+}
+
+int right_rotate(rbtree tree, rbnode x) {
+	y = x->lsubtr;
+	/* For easy to understand */
+	// alpha = y->lsubtr;		/*leave unchanged */
+	beta  = y->rsubtr;		/*switch to x->lsubtr */
+	// gamma = x->rsubtr;		/*leave unchanged */
+	
+	/* change for beta */
+	x->lsubtr = beta;
+	if(beta)
+		beta->parent = x;
+
+	y->parent = x->parent;
+	/* check if x is the root */
+	if(!x->parent)
+		tree->root = y;
+	/* check if x is the lsubtr or right subtr */
+	else if(x == x->parent->lsubtr)
+		x->parent->lsubtr = y;
+	else
+		x->parent->rsubtr = y;
+
+	y->rsubtr = x;
+	x->parent = y;
+}
+
+int rb_insert(rbtree tree, Telemtype entry) {
+	rbnode inode = malloc(sizeof(*inode));
+	inode->data = entry;
+	inode->rsubtr = NULL;
+	inode->lsubtr = NULL;
+	inode->color  = RED;
+
+	rbnode x = tree->root;
+	rbnode y;
+	while (x) {
+		y = x;
+		x = (compare(x->data, entry) < 0) ? x->rsubtr: x->lsubtr;
+	}
+	// parent link setled 
+	inode->parent = y;
+	/* check if tree is empty */
+	if (!y)
+		tree->root = inode;
+
+	else if (compare(entry, x->data) > 0) 
+		y->rsubtr = inode;
+	else
+		y->rsubtr = inode;
+	// root cannot be NULL now
+	rb_insert_fix(tree->root, inode);
+}
+
+int rb_insert_fix(rbtree tree, rbnode z) {
+	/* remember: z is a copy */
+	/* edx = 8(edp) */
+	rbnode y;
+
+	while(color(z->parent) == RED) {
+		y = uncle(z);
+
+// what change is not harmful?
+// if we chnage a node with two red sub nodes to red, we have to change all his sons to black
+			// CASE 1:
+			/* parent and uncle are the same color */
+			if (y->color == RED){
+				z->parent->color = BLACK;
+				y->color = BLACK;
+				z->parent->parent->color = RED;
+				z = grandp(z);
+			}
+			// if not CASE 1: could be two sub cases
+
+			/* uncle are black*/
+			/* z is right son, transfer z->parent to z's left subtr */
+			else if(z == z->parent->rsubtr) {
+				z = z->parent;
+				left_rotate(tree,z);
+				/* z point to its parent, but after rotate, parent is now the subtree node, so the next line is uneeded 
+				z = z->lsubtr;
+				*/
+			}
+			/* new z must be a lsubtr */
+			/* whats left or turns into: z is a lsubtr, grandp is black, uncle is black, parent is red, z is red */
+			z->parent->color = BLACK;
+			grandp(z)->color = RED;
+			right_rotate(tree, grandp(z));
+
+			else {
+				z->parent->color = BLACK;
+				z->parent->parent->color = RED;
+				right_rotate(root, z->parent->parent);
+			}
+	}
+	root->color = BLACK;
+}
+rbnode grandp(rbnode n) {
+	return n->parent->parent;
+}
+
+rbnode uncle(rbnode n) {
+	ret = n->parent->parent->rsubtr;
+
+	if (n->parent == n->parent->parent->rsubtr)
+		ret = n->parent->parent->lsubtr;
+}
+
+int color(rbnode n) {
+	col = RED;
+	if (!n)
+		col = BLACK;
+
+	else if(n->color == BLACK)
+		col = BLACK;
+	return col;
+}
+
+int rb_delete(rbnode root, rbnode z) {
+	rbnode y;
+	rbnode x = root;
+
+}

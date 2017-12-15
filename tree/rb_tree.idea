@@ -1,0 +1,43 @@
+Red Black Tree is a widly used and really important data structure
+
+A Red-Black tree is a binary Tree which keeps 5 property:
+
+*1: A node is ether red or black;
+*2: Root node is black;
+*3: every leaf node is black;					#leaf means null nodes
+*4: if a node is red, both tow sub nodes of it are black;
+*5: Every path, from root down to every leaf, has same black nodes on the way;
+
+
+First point: Why it's self-balanced?
+
+From *4, its not hard to see:
+	
+	Every Red-Black tree, has at least twice larger number of black nodes than red nodes!!!
+	Becasue:
+		Extreme case: 	root is black,
+				Every black node has two red sub nodes.
+				Every leaf is black;
+				
+		Every red node has two black sub nodes with it, so nodes add up to get #Black = 2*#Red +1;
+
+From *5, since every path has same #Black_nodes:
+	case 1 "if no red nodes in tree":
+		tree is a purly balanced;
+	
+	case 2 "has red nodes":
+		the paths have red nodes are at most twice longer than the ones which have not;
+SO: the longest path is at most twice longer than the shortest one.
+
+
+When we add: O(lg(n)) 
+	we always add a red node, to keep tree balanced, we check if parent is black, if so ,we are done, else we do somthing.
+
+	ONE IMPORTANT THING:
+			we dont add black point, we just add red point, if we add black point, we add it on root.
+
+When we delete: O (lg(n)) 
+	if we delete a red node:
+	1st: It could not be the root;
+	2nd: It dosent change the black height;
+	

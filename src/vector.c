@@ -1,0 +1,129 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <assert.h>
+
+/* A C vector is just a growing array, since we can index it,
+ */
+
+void dummy_free(void *addr) {}
+
+typedef int (*VecCmpF) (const void *elemAddr1,
+			const void *elemAddr2);
+typedef void (*freefun) (void *elemAddr);
+typedef void (*VecMapF) (void *elemAddr, void *auxData);
+
+typedef struct {
+	void *elems;
+	size_t elemsize;
+	int len;
+	int alloc_len;
+	void (*free) (void *);
+} vector_t;
+
+bool
+vector_init(vector_t *v, size_t esize, freefun f)
+{
+	v->elems = (void *) malloc(esize * 4);
+	if (!v->elems)
+		return false;
+	if (f)
+		v->free = f;
+	else
+		v->free = dummy_free;
+	v->elemsize = esize;
+	v->len = 0;
+	v->alloc_len = 4;
+	return true;
+}
+
+void
+vector_destroy(vector_t *v)
+{
+	typedef char elem_t[v->elemsize];
+	elem_t *p = (elem_t *)v->elems;
+	for (int i = 0; i < v->len; i++)
+		v->free(p++);
+}
+
+//we can actually make a general expand function
+static bool
+expand_vector_if_need(vector_t *v)
+{
+	if (v->len >= v->alloc_len) {
+		v->alloc_len *= 2;
+		v->elems = realloc(v->elems, v->elemsize * v->alloc_len);
+	}
+	return true;
+}
+
+static bool
+shrink_vector_if_need(vector_t *v)
+{
+	if (v->len <= v->alloc_len / 4) {
+		v->elems = realloc(v->elems, v->len);
+		v->alloc_len = v->len;
+	}
+	return true;
+}
+
+
+/**
+ * return a new element address for you to copy, since the copy function is
+ * usually not efficient
+ */
+void *
+vector_newelem(vector_t *v)
+{
+	typedef char elem_t[v->elemsize];
+	expand_vector_if_need(v);
+	void *elem = (elem_t*)v->elems + v->len;
+	v->len += 1;
+	return elem;
+}
+
+void *
+vector_at(vector_t *v, size_t idx)
+{
+	if (idx >= v->len)
+		return NULL;
+	return (unsigned char *)v->elems + v->elemsize * idx;
+}
+
+
+void
+vector_append(vector_t *v, void *e)
+{
+	typedef char elem_t[v->elemsize];
+	expand_vector_if_need(v);
+	void *elem = (elem_t*)v->elems + v->len;
+	memcpy(elem, e, v->elemsize);
+	v->len += 1;
+}
+
+
+void
+vector_pop(vector_t *v)
+{
+	v->len--;
+	shrink_vector_if_need(v);
+}
+
+
+int main(int argc, char *argv[argc])
+{
+	struct a {
+		char t[9];
+	};
+	struct a bb;
+	strcpy((char *)&(bb.t), "aaaaaaaa");
+
+	vector_t v;
+	vector_init(&v, sizeof(struct a), NULL);
+	int i;
+	for (i = 0; i < 100; i++)
+		vector_append(&v, &bb);
+	for (i = 0; i < 100; i++)
+		vector_pop(&v);
+	return 0;
+}

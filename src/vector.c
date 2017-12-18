@@ -1,25 +1,15 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
 
+#include "helpers.h"
+#include "vector.h"
+
 /* A C vector is just a growing array, since we can index it,
  */
 
-void dummy_free(void *addr) {}
-
-typedef int (*VecCmpF) (const void *elemAddr1,
-			const void *elemAddr2);
-typedef void (*freefun) (void *elemAddr);
-typedef void (*VecMapF) (void *elemAddr, void *auxData);
-
-typedef struct {
-	void *elems;
-	size_t elemsize;
-	int len;
-	int alloc_len;
-	void (*free) (void *);
-} vector_t;
 
 bool
 vector_init(vector_t *v, size_t esize, freefun f)
@@ -44,14 +34,20 @@ vector_destroy(vector_t *v)
 	elem_t *p = (elem_t *)v->elems;
 	for (int i = 0; i < v->len; i++)
 		v->free(p++);
+	free(v->elems);
 }
 
 //we can actually make a general expand function
 static bool
 expand_vector_if_need(vector_t *v)
 {
+	//avoid v->alloc = 0 problem
+	size_t new_alloc = (v->alloc_len == 0) ?  4 : v->alloc_len * 2;
 	if (v->len >= v->alloc_len) {
-		v->alloc_len *= 2;
+#ifdef DEBUG_TYPE
+		fprintf(stderr, "vector expanding at length %d\n", v->len);
+#endif
+		v->alloc_len = new_alloc;
 		v->elems = realloc(v->elems, v->elemsize * v->alloc_len);
 	}
 	return true;
@@ -61,6 +57,9 @@ static bool
 shrink_vector_if_need(vector_t *v)
 {
 	if (v->len <= v->alloc_len / 4) {
+#ifdef DEBUG_TYPE
+		fprintf(stderr, "vector shrinks at length %d\n", v->len);
+#endif
 		v->elems = realloc(v->elems, v->len);
 		v->alloc_len = v->len;
 	}
@@ -109,7 +108,7 @@ vector_pop(vector_t *v)
 	shrink_vector_if_need(v);
 }
 
-
+/*
 int main(int argc, char *argv[argc])
 {
 	struct a {
@@ -127,3 +126,4 @@ int main(int argc, char *argv[argc])
 		vector_pop(&v);
 	return 0;
 }
+*/

@@ -7,6 +7,8 @@ add_definitions(-D_GNU_SOURCE)
 if (NOT CMAKE_BINARY_DIR)
   set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/build")
 endif()
+
+set(CMAKE_C_STANDARD 11)
 #set(CMAKE_C_FLAGS "-g")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

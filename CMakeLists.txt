@@ -10,7 +10,11 @@ endif()
 #set(CMAKE_C_FLAGS "-g")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(TYPES_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(CTYPES_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 #include_directories(include)
-add_subdirectory(src)
+add_library(ctype STATIC
+  src/vector.c)
+
+set(CTYPES_LIBRARIES
+  ctype)

@@ -9,14 +9,14 @@ if (NOT CMAKE_BINARY_DIR)
 endif()
 
 set(CMAKE_C_STANDARD 11)
-#set(CMAKE_C_FLAGS "-g")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CTYPES_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-#include_directories(include)
 add_library(ctype STATIC
-  src/vector.c)
+  src/vector.c
+  src/vtree.c
+  )
 
 set(CTYPES_LIBRARIES
   ctype)

@@ -11,12 +11,11 @@ endif()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CTYPES_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(CTYPES_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" CACHE PATH "ctypes include directories")
 
 add_library(ctype STATIC
   src/vector.c
   src/vtree.c
   )
 
-set(CTYPES_LIBRARIES
-  ctype)
+set(CTYPES_LIBRARIES ctype CACHE STRING "ctypes library")

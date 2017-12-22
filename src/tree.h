@@ -19,4 +19,4 @@ struct vtree_node {
 }
 #endif
 
-#endif
+#endif /*EOF */

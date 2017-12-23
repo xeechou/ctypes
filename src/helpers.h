@@ -24,8 +24,9 @@ typedef int (*VecCmpF) (const void *elemAddr1,
 typedef void (*freefun) (void *elemAddr);
 typedef void (*VecMapF) (void *elemAddr, void *auxData);
 
-#define ptr_derefer(type, ptr)	((type) *)(ptr)
-
+/* type is the type that you dereference to, it is kind of weird */
+#define deref(type, ptr)	*(type)(ptr)
+//##define static_cast(type, ptr)
 
 #ifdef __cplusplus
 }

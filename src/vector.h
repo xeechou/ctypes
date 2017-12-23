@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "helpers.h"
 
 typedef struct {
@@ -24,13 +25,15 @@ vector_destroy(vector_t *v);
 
 /**
  * @brief return a new element address for you to copy, since the copy function
- * is usually not efficient for small data type
+ * is usually not efficient for small data type,
+ * @return (type *) where type is the type of the elem
  */
 void *
 vector_newelem(vector_t *v);
 
 /**
  * @brief ability to random access the vector
+ * @return (type *) of the type you inserted
  */
 void *
 vector_at(vector_t *v, size_t idx);

@@ -15,7 +15,7 @@ struct vtree_node {
 
 #define vtree_ptr_size sizeof(struct vtree_node *)
 
-#ifdef __cpluscplus
+#ifdef __cplusplus
 }
 #endif
 

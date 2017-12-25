@@ -17,7 +17,7 @@ extern "C" {
 #define xfree(x) free(x)
 #endif
 
-static void dummy_free(void *addr) {}
+void dummy_free(void *addr);
 
 
 typedef int (*VecCmpF) (const void *elemAddr1,

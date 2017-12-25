@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <stddef.h>
 
 
 #ifdef USE_PAGE
@@ -24,9 +25,14 @@ typedef int (*VecCmpF) (const void *elemAddr1,
 typedef void (*freefun) (void *elemAddr);
 typedef void (*VecMapF) (void *elemAddr, void *auxData);
 
-/* type is the type that you dereference to, it is kind of weird */
-#define deref(type, ptr)	*(type)(ptr)
-//##define static_cast(type, ptr)
+#ifndef deref
+#define deref(type, ptr)		*(type)(ptr)
+#endif
+
+#ifndef container_of
+#define container_of(ptr, type, member)					\
+			(type *)(  (char *)(ptr) - offsetof(type, member)   )
+#endif
 
 #ifdef __cplusplus
 }

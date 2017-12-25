@@ -9,6 +9,7 @@
 
 /* A C vector is just a growing array, since we can index it,
  */
+void dummy_free(void *addr) {}
 
 
 bool

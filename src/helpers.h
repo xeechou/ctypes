@@ -34,6 +34,13 @@ typedef void (*VecMapF) (void *elemAddr, void *auxData);
 			(type *)(  (char *)(ptr) - offsetof(type, member)   )
 #endif
 
+#ifndef container_of_sm
+#define container_of_sm(ptr, sample, member)				\
+	(__typeof__(sample))((char *)(ptr) -				\
+			     offsetof(__typeof__(*sample), member))
+#endif
+
+
 #ifdef __cplusplus
 }
 #endif

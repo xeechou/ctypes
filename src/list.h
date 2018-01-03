@@ -1,6 +1,11 @@
 #ifndef CTYPES_LIST_H
 #define CTYPES_LIST_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 #include "helpers.h"
 
 #ifdef __cplusplus
@@ -16,18 +21,14 @@ typedef struct list_t {
 	struct list_t *next;
 } list_t;
 
-#ifndef container_of_sm
-#define container_of_sm(ptr, sample, member)				\
-	(__typeof__(sample))((char *)(ptr) -				\
-			     offsetof(__typeof__(*sample), member))
-#endif
 
 
 #define list_for_each(pos, head, member)				\
 	for (pos = container_of_sm((head)->next, pos, member);	\
 	     &pos->member != (head);					\
-	     pos = tw_container_of(pos->member.next, pos, member))
+	     pos = container_of_sm(pos->member.next, pos, member))
 
+//you can use list_each_safe to clear the memory, I guess
 #define list_for_each_safe(pos, tmp, head, member)			\
 	for (pos = container_of_sm((head)->next, pos, member),		\
 	     tmp = container_of_sm((pos)->member.next, tmp, member);	\
@@ -35,157 +36,46 @@ typedef struct list_t {
 	     pos = tmp,							\
 	     tmp = container_of_sm(pos->member.next, tmp, member))
 
-
-/* append @other to @list */
-static inline void
-list_append_list(list_t *list, list_t *other)
-{
-	if (!other)
-		return;
-	list->prev->next = other;
-	other->prev->next = list;
-	list_t *tmp = list->prev;//when I can remove this line...
-	list->prev = other->prev;
-	other->prev = tmp;
-}
-
-//swap should be safe if one and another are both valid
-static inline void
-list_swap(list_t *one, list_t *another)
-{
-	list_t tmp = *one;
-	//update one,
-	one->next = another->next;
-	one->prev = another->prev;
-	//update one->prev,
-	one->prev->next = another;
-	//update one->next,
-	one->next->prev = another;
-	//update another,
-	another->next = tmp.next;
-	another->prev = tmp.prev;
-	//update another->prev,
-	another->prev->next = one;
-	//update another->next,
-	another->next->prev = one;
-}
-
-//This code should be used pretty often when we want to switch views to the front.
-//we may want to do something like pop-up-update, push-down-update to move the views
-static inline void
-list_swap_header_update(list_t **header, list_t *another)
-{
-	//always looks for the boundary problems
-	if (!(*header)) {
-		*header = another;
-		return;
-	}
-	list_swap(*header, another);
-	*header = another;
-}
+/**
+ * @brief make a list
+ */
+void list_init(list_t *list);
 
 /**
- * insert an element at the end of a list,
+ * @brief insert a list int beginning
  */
-static inline void
-list_append_elem(list_t *header, list_t *elem)
-{
-	//append a elem to the the list_t is actually just insert it before header
-	header->prev->next = elem;
-	elem->prev = header->prev;
-	header->prev = elem;
-	elem->next = header;
-}
+void list_insert(list_t *list, list_t *elm);
 
-/* Insert a new header to the list_t @header */
-//static inline void
-//list_insert_header(list_t **header, list_t *elem)
-//{
-//	list_append_elem(header, elem);
-//	*header = elem;
-//}
-/*
-static inline void
-list_remove_update(list_t **header, list_t *elem)
-{
-	//remove one node from the list_t and update the header if necessary,
-	//there could be following boundary situations:
-	//0) *elem == header, but not only elem
-	//1) *elem is the only elem in the list
-	list_t *prev = elem->prev;
-	list_t *next = elem->next;
-	prev->next = next;
-	next->prev = prev;
-	//case 0: elem == header
-	if (elem == *header)
-		*header = next;
-	//case 1: the last elem
-	//there is no assignment to elem directly, so elem->next shouldn't change
-	if (elem->next == elem)
-		*header = NULL;
-}
-*/
+list_t* list_insert_list(list_t *list, list_t *another);
 
-static inline void
-list_init(list_t *list)
-{
-	list->prev = list;
-	list->next = list;
-}
+/**
+ * @brief append @other to @list at the end
+ */
+void
+list_append(list_t *list, list_t *other);
 
-//insert after the elem
-static inline void
-list_insert(list_t *list, list_t *elm)
-{
-	elm->prev = list;
-	elm->next = list->next;
-	list->next = elm;
-	elm->next->prev = elm;
-}
+/**
+ * @brief append a list @other to the @list
+ *
+ * So the head of the other is lost, we return the head, you can decide to free
+ * it or not
+ */
+list_t *list_append_list(list_t *list, list_t *ol);
 
+/**
+ *
+ * swap @one and @another
+ */
+void list_swap(list_t *one, list_t *another);
 
-static inline void
-list_remove(list_t *elm)
-{
-	elm->prev->next = elm->next;
-	elm->next->prev = elm->prev;
-	elm->next = NULL;
-	elm->prev = NULL;
-}
+int list_length(const list_t *list);
 
-static inline int
-list_length(const list_t *list)
-{
-	struct list_t *e;
-	int count;
+void list_remove(list_t *elm);
 
-	count = 0;
-	e = list->next;
-	while (e != list) {
-		e = e->next;
-		count++;
-	}
+bool list_empty(const list_t *header);
 
-	return count;
-}
-
-static inline int
-list_empty(const list_t *header)
-{
-	return header->next == header;
-}
-
-static inline void
-list_insert_list(list_t *header, list_t *other)
-{
-	if (list_empty(other))
-		return;
-
-	other->next->prev = header;
-	other->prev->next = header->next;
-	header->next->prev = other->prev;
-	header->next = other->next;
-}
+//void
+//list_swap_header_update(list_t **header, list_t *another);
 
 
 #ifdef __cplusplus

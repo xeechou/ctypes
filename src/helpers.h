@@ -41,6 +41,16 @@ typedef void (*VecMapF) (void *elemAddr, void *auxData);
 #endif
 
 
+#ifndef num
+#define num(x) (sizeof (x) / sizeof (*x) )
+#endif
+
+/* from this, you can acess a memeber of a struct with its offset */
+#ifndef ptrmemb
+#define ptrmemb(ptr, offset, type) (type *)((char *)(ptr) + offset)
+#endif
+
+
 #ifdef __cplusplus
 }
 #endif

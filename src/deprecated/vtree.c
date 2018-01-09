@@ -1,45 +1,29 @@
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "vector.h"
-#include "stack.h"
-#include "tree.h"
 
-struct vtree_node *
-vtree_cast(void *potential, const struct vtree_node *example)
-{
-	return (struct vtree_node *)((const char *)potential + example->offset);
-}
-void *
-vtree_container(struct vtree_node *p)
-{
-	return (char *)p - p->offset;
-}
+#include "tree.h"
 
 
 void
-vtree_node_init(struct vtree_node *n, unsigned int tnodesize, unsigned int offset)
+vtree_node_init(struct vtree_node *n)
 {
-	n->offset = offset;
-	n->children.elemsize = tnodesize;
+	n->children.elemsize = sizeof(struct vtree_node *);
 	n->children.alloc_len = 0;
 	n->children.len = 0;
 	n->children.elems = NULL;
-	n->parent = NULL;
 }
 
 void
 vtree_node_add_child(struct vtree_node* p, struct vtree_node *c)
 {
-	if (c->children.elemsize != p->children.elemsize) {
+	if (c->children.len != vtree_ptr_size) {
 		//leap node
-		vtree_node_init(c, p->children.elemsize, p->offset);
-		c->parent = p;
+		vtree_node_init(c);
 	}
-	//from the c, we gets its outerbox
-	void *e = (signed char *)c - p->offset;
-	vector_append(&p->children, e);
+	deref(struct vtree_node **,
+	      vector_newelem(&p->children)) = c;
 }
 
 /*
@@ -53,8 +37,8 @@ vtree_sort(struct vtree_node *p, int (*cmpfun)(const void *, const void *))
 	qsort(p->children.elems, p->children.len, p->children.elemsize, cmpfun);
 	int i;
 	for (i = 0; i < p->children.len; i++) {
-		struct vtree_node *t = ptrmemb(vector_at(&p->children, i), p->offset,
-					      struct vtree_node);
+		struct vtree_node *t = deref(struct vtree_node **,
+					     vector_at(&p->children, i));
 		vtree_sort(t, cmpfun);
 	}
 }
@@ -63,46 +47,12 @@ struct vtree_node *
 vtree_find(struct vtree_node *p, void *key,
 	   int (*cmpfun)(const void *, const void *))
 {
-	//you can uses the same compare function in sort
-	return ptrmemb(bsearch(key,
-			       p->children.elems, p->children.len, p->children.elemsize,
-			       cmpfun),
-		       p->offset, struct vtree_node);
+	//cmp function has to be cmp (key_t *key, vtree_node *t) or vtree_node **t
+	return *(struct vtree_node **)bsearch(key, p->children.elems,
+					      p->children.len, p->children.elemsize, cmpfun);
 }
 
 
-void
-vtree_print(const struct vtree_node *p,
-	    void (*print)(const void *), int indent)
-{
-	for (int i = 0; i < indent; i++)
-		fprintf(stderr, "\t");
-	print(((signed char *)p - p->offset));
-	for (int i = 0; i < p->children.len; i++) {
-		const struct vtree_node *node = ptrmemb(cvector_at(&p->children, i), p->offset, const struct vtree_node);
-		vtree_print(node, print, indent+1);
-	}
-}
-
-void
-vtree_destroy(struct vtree_node *p, void (*freefun)(void *))
-{
-	//leaf, there is nothing we do here
-	if (p->children.len == 0) {
-		if (freefun)
-			freefun((char *)p - p->offset);
-		return;
-	}
-	else {
-		for (int i = 0; i < p->children.len; i++) {
-			vtree_destroy(vtree_cast(vector_at(&p->children, i), p), freefun);
-		}
-		free(p->children.elems);
-	}
-	//the stack approach, you need one stacks and one vector, the stack does
-	//DFS, well you can go right most instead of left most, the other just
-	//collect all the stack spits and does the free
-}
 
 //okay I gotta test this
 /*

@@ -7,7 +7,6 @@ extern "C" {
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include "helpers.h"
 
 typedef struct {
@@ -38,6 +37,12 @@ vector_newelem(vector_t *v);
  */
 void *
 vector_at(vector_t *v, size_t idx);
+
+/**
+ * @brief ability of constant random access
+ */
+const void *
+cvector_at(const vector_t *v, size_t idx);
 
 /**
  * @brief for big datatype, you can use memcopy method to copy element

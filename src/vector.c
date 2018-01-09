@@ -91,6 +91,15 @@ vector_at(vector_t *v, size_t idx)
 }
 
 
+const void *
+cvector_at(const vector_t *v, size_t idx)
+{
+	if (idx >= v->len)
+		return NULL;
+	return (unsigned char *)v->elems + v->elemsize * idx;
+}
+
+
 void
 vector_append(vector_t *v, void *e)
 {

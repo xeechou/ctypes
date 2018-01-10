@@ -100,7 +100,7 @@ cvector_at(const vector_t *v, size_t idx)
 }
 
 
-void
+void *
 vector_append(vector_t *v, void *e)
 {
 	typedef char elem_t[v->elemsize];
@@ -108,6 +108,7 @@ vector_append(vector_t *v, void *e)
 	void *elem = (elem_t*)v->elems + v->len;
 	memcpy(elem, e, v->elemsize);
 	v->len += 1;
+	return elem;
 }
 
 

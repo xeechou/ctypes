@@ -47,7 +47,7 @@ cvector_at(const vector_t *v, size_t idx);
 /**
  * @brief for big datatype, you can use memcopy method to copy element
  */
-void
+void *
 vector_append(vector_t *v, void *e);
 
 /**

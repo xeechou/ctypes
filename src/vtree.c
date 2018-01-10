@@ -29,7 +29,28 @@ vtree_node_init(struct vtree_node *n, unsigned int tnodesize, unsigned int offse
 	n->parent = NULL;
 }
 
-void
+size_t
+vtree_nchilds(const struct vtree_node *n)
+{
+	return n->children.len;
+}
+
+struct vtree_node *
+vtree_ithnode(struct vtree_node *n, off_t i)
+{
+	void *plain =  vector_at(&n->children, i);
+	if (!plain)
+		return NULL;
+	return vtree_cast(plain, n);
+}
+
+void *
+vtree_ithchild(struct vtree_node *n, off_t i)
+{
+	return vector_at(&n->children, i);
+}
+
+void *
 vtree_node_add_child(struct vtree_node* p, struct vtree_node *c)
 {
 	if (c->children.elemsize != p->children.elemsize) {
@@ -39,7 +60,7 @@ vtree_node_add_child(struct vtree_node* p, struct vtree_node *c)
 	}
 	//from the c, we gets its outerbox
 	void *e = (signed char *)c - p->offset;
-	vector_append(&p->children, e);
+	return vector_append(&p->children, e);
 }
 
 /*

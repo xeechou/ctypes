@@ -24,10 +24,18 @@ void *vtree_container(struct vtree_node *p); //you can also use container of
  */
 void vtree_node_init(struct vtree_node *n, unsigned int tnodesize, unsigned int offset);
 
+size_t vtree_nchilds(const struct vtree_node *n);
+void *vtree_ithchild(struct vtree_node *n, off_t i);
+struct vtree_node *vtree_ithnode(struct vtree_node *n, off_t i);
+
+
+
 /**
  * @brief the function will find the original address of object from c, and copy from that
+ *
+ * return the newly added child
  */
-void vtree_node_add_child(struct vtree_node* p, struct vtree_node *c);
+void* vtree_node_add_child(struct vtree_node* p, struct vtree_node *c);
 
 //sort and find uses the same comp function
 void vtree_sort(struct vtree_node *p, int (*cmpfun)(const void *, const void *));

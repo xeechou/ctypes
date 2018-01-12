@@ -18,6 +18,8 @@ add_library(ctype STATIC
   src/vector.c
   src/vtree.c
   src/buffer.c
+  src/stack.c
+  src/dhash.c
   )
 
 set(CTYPES_LIBRARIES ctype CACHE STRING "ctypes library")

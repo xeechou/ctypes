@@ -12,18 +12,20 @@ extern "C" {
 #ifdef USE_PAGE
 #define xmalloc(x) page_malloc(x)
 #define xfree(x) page_free(x)
+#define xrealloc(x) page_realloc(x)
 #else
 #define xmalloc(x) malloc(x)
 #define xfree(x) free(x)
+#define xrealloc(x) realloc(x)
+#define xcalloc(n,x) calloc(x,n)
 #endif
 
-void dummy_free(void *addr);
-
-
-typedef int (*VecCmpF) (const void *elemAddr1,
+typedef int (*cmpfun) (const void *elemAddr1,
 			const void *elemAddr2);
 typedef void (*freefun) (void *elemAddr);
 typedef void (*VecMapF) (void *elemAddr, void *auxData);
+void dummy_free(void *addr);
+
 
 #ifndef deref
 #define deref(type, ptr)		*(type)(ptr)

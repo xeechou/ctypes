@@ -18,25 +18,21 @@ typedef struct {
 } vector_t;
 
 
-bool
-vector_init(vector_t *v, size_t esize, freefun f);
-void
-vector_destroy(vector_t *v);
+bool vector_init(vector_t *v, size_t esize, freefun f);
 
+void vector_destroy(vector_t *v);
 /**
  * @brief return a new element address for you to copy, since the copy function
  * is usually not efficient for small data type,
  * @return (type *) where type is the type of the elem
  */
-void *
-vector_newelem(vector_t *v);
+void *vector_newelem(vector_t *v);
 
 /**
  * @brief ability to random access the vector
  * @return (type *) of the type you inserted
  */
-void *
-vector_at(vector_t *v, size_t idx);
+void *vector_at(vector_t *v, size_t idx);
 
 /**
  * @brief ability of constant random access
@@ -55,6 +51,9 @@ vector_append(vector_t *v, void *e);
  */
 void
 vector_pop(vector_t *v);
+
+
+
 
 
 #ifdef __cplusplus

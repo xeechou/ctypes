@@ -7,6 +7,20 @@
 extern "C" {
 #endif
 
+/**
+ * @brief a variable length tree node implementation.
+ *
+ * It is not very efficient since each node holds a piece of memory, it is not a
+ * search tree, so the struture of tree reflects the structure of the data at
+ * runtime.
+ *
+ * The usage of the vtree_node is containing it in your own type. The @offset is
+ * used to locate vtree_node in the parent type. The children stored in the
+ * vector is the data of parent type. And the depth of the tree shouldn't be too
+ * deep coz some methods are implemented recursively
+ *
+ * TODO: provide a make static method. To move all the children in the same vector
+ */
 struct vtree_node {
 	//we can take the advantage of the sorting and search
 	vector_t children;
@@ -47,6 +61,9 @@ void vtree_print(const struct vtree_node *p,
 /* destroy the tree depth first */
 void vtree_destroy(struct vtree_node *p, void (*freefun)(void *));
 
+
+
+//maybe you need a search tree
 
 
 #ifdef __cplusplus

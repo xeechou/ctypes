@@ -44,10 +44,10 @@ typedef struct dhash_table {
 void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t cmp,
 		size_t esize, freefun free);
 
-void dhash_insert(dhashtab_t *t, void *elem);
+void dhash_insert(dhashtab_t *t, const void *elem);
 
 void dhash_destroy(dhashtab_t *t);
-
+const void *dhash_search(dhashtab_t *t, const void *elem);
 
 
 #ifdef __cplusplus

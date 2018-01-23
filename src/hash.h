@@ -35,6 +35,7 @@ uint64_t hash_sdbm(const void *str);
 typedef struct dhash_table {
 	//the size of the hash table need to be a prime number
 	vector_t data;
+	vector_t indices;
 	hash_func_t hash0;
 	hash_func_t hash1;
 	hash_cmp_func_t cmp;
@@ -43,6 +44,7 @@ typedef struct dhash_table {
 
 void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t cmp,
 		size_t esize, freefun free);
+void dhash_destroy(dhashtab_t *t);
 
 void dhash_insert(dhashtab_t *t, const void *elem);
 

@@ -28,6 +28,14 @@ vector_init(vector_t *v, size_t esize, freefun f)
 	return true;
 }
 
+size_t
+vector_memsize(const vector_t *v)
+{
+	return v->elemsize * v->alloc_len;
+}
+
+
+
 void
 vector_destroy(vector_t *v)
 {
@@ -49,7 +57,14 @@ expand_vector_if_need(vector_t *v)
 		fprintf(stderr, "vector expanding at length %d\n", v->len);
 #endif
 		v->alloc_len = new_alloc;
+		void *tmp = v->elems;
 		v->elems = realloc(v->elems, v->elemsize * v->alloc_len);
+		if (!v->elems) {
+			fprintf(stderr, "vector alloc failed!\n");
+			v->elems = tmp;
+			return false;
+		}
+
 	}
 	return true;
 }

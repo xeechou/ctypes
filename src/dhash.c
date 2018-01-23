@@ -5,11 +5,9 @@
 static uint64_t next_prime(uint64_t n)
 {
 	//make it odd
-	if (n < 3)
-		return 11;
 	if (n % 2 == 0)
 		n += 1;
-	for (uint64_t c = n+2; true; c++) {
+	for (uint64_t c = n*2+1; true; c++) {
 		bool found = true;
 		for (uint64_t x = 2; x < c/2; x++) {
 			if (c % x == 0) {
@@ -26,38 +24,55 @@ static uint64_t next_prime(uint64_t n)
 static void
 expand_dhasht_if_needed(dhashtab_t *table)
 {
-	if (table->data.len >= table->data.alloc_len / 2) {
+	if (table->indices.elemsize == 0)
+		vector_init(&table->indices, sizeof(int), NULL);
+	if (table->indices.len >= table->data.alloc_len / 2) {
+		vector_t backup;
+		vector_t backup_idx;
+		memcpy(&backup, &table->data, sizeof(vector_t));
+		memcpy(&backup_idx, &table->indices, sizeof(vector_t));
+		//dont free the elements here
+		backup.free = dummy_free;
+		vector_init(&table->indices, sizeof(int), NULL);
+
 		table->data.alloc_len = next_prime(table->data.alloc_len);
-		table->data.elems = realloc(table->data.elems, table->data.alloc_len);
+		table->data.len = table->data.alloc_len;
+		table->data.elems = xcalloc(table->data.alloc_len, table->data.elemsize);
+		for (int i = 0; i < backup_idx.len; i++) {
+			int idx = *(int *)cvector_at(&backup_idx, i);
+			dhash_insert(table, cvector_at(&backup, idx));
+		}
+		vector_destroy(&backup);
+		vector_destroy(&backup_idx);
 	}
 }
 
 /**
  * cet function guarantee de retourner qqchs
  *
- * NULL: not found in all the entries.
+ * -1: not found in all the entries.
  * data: if hash_empty or eq. Then you need to compare it yourself
  */
-static void*
+static int
 _dhash_search(dhashtab_t *t, const void *elem)
 {
 	uint64_t hv0 = t->hash0(elem);
 	uint64_t hv1 = t->hash1(elem);
-	for (int i = 0; i < t->data.len; i++) {
-		uint64_t idx = (hv0 + i * hv1) % t->data.alloc_len;
+	for (int i = 0; i < t->data.alloc_len; i++) {
+		int idx = (hv0 + i * hv1) % t->data.alloc_len;
 		int c = t->cmp(elem, cvector_at(&t->data, idx));
 		switch(c) {
 		case hash_empty:
-			return vector_at(&t->data, idx);
+			return idx;
 			break;
 		case hash_eq:
-			return vector_at(&t->data, idx);
+			return idx;
 			break;
 		case hash_neq:
 			continue;
 		}
 	}
-	return NULL;
+	return -1;
 }
 
 /**
@@ -67,22 +82,23 @@ _dhash_search(dhashtab_t *t, const void *elem)
 const void *
 dhash_search(dhashtab_t *t, const void *elem)
 {
-	void *addr = _dhash_search(t, elem);
-	if (!addr || t->cmp(elem, addr) == hash_empty)
+	int idx = _dhash_search(t, elem);
+	if (idx == -1 || t->cmp(elem, cvector_at(&t->data, idx)) == hash_empty)
 		return NULL;
 	else
-		return addr;
+		return cvector_at(&t->data, idx);
 }
 
 void
 dhash_insert(dhashtab_t *t, const void *elem)
 {
 	expand_dhasht_if_needed(t);
-	void *addr = _dhash_search(t, elem);
+	int idx = _dhash_search(t, elem);
+	void *addr = vector_at(&t->data, idx);
 	hash_cmp_val r = t->cmp(elem, addr);
 	if (r == hash_empty) {
 		memcpy(addr, elem, t->data.elemsize);
-		t->data.len += 1;
+		*(int *)vector_newelem(&t->indices) = idx;
 	}
 }
 
@@ -93,8 +109,10 @@ void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t c
 	t->data.elemsize = esize;
 	t->data.alloc_len = 11;
 	t->data.elems = xcalloc(t->data.alloc_len, esize);
-	t->data.len = 0;
+	t->data.len = 11;
 	t->data.free = (free) ? free : dummy_free;
+
+	vector_init(&t->indices, sizeof(int), NULL);
 
 	t->hash0 = h0;
 	t->hash1 = h1;
@@ -103,7 +121,12 @@ void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t c
 
 void dhash_destroy(dhashtab_t *t)
 {
-	vector_destroy(&t->data);
+	for (int i = 0; i < t->indices.len; i++) {
+		void *p = vector_at(&t->data, *(int *)cvector_at(&t->indices, i));
+		t->data.free(p);
+	}
+	xfree(t->data.elems);
+	vector_destroy(&t->indices);
 }
 
 
@@ -136,7 +159,7 @@ hash_cmp_val hash_cmp_str(const void *a, const void *intable)
 {
 	const char *stra = *(const char **)a;
 	const char *strb = *(const char **)intable;
-	if (*strb == '\0')
+	if (!strb)
 		return hash_empty;
 	else
 		return  (strcmp(stra, strb) == 0) ? hash_eq : hash_neq;

@@ -29,9 +29,9 @@ struct anonymous_buff_t {
 
 int anonymous_buff_new(struct anonymous_buff_t *buff, off_t size, int prot, int flags);
 
-off_t anonymous_buff_alloc_offset(struct anonymous_buff_t *buff, off_t newsize);
+int anonymous_buff_alloc_by_offset(struct anonymous_buff_t *buff, off_t newsize);
 
-void *anonymous_buff_alloc_addr(struct anonymous_buff_t *buff, off_t newsize);
+void *anonymous_buff_alloc_by_addr(struct anonymous_buff_t *buff, off_t newsize);
 
 int anonymous_buff_resize(struct anonymous_buff_t *buff, off_t size);
 

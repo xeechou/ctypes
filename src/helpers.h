@@ -66,8 +66,12 @@ void dummy_free(void *addr);
 #define ptrmemb(ptr, offset, type) (type *)((char *)(ptr) + offset)
 #endif
 
-
-
+#ifndef swap
+#define swap(a, b)		      \
+	({ __typeof__ (a) _tmp = (a); \
+		a = (b);	      \
+		b = (_tmp);})
+#endif
 
 #ifdef __cplusplus
 }

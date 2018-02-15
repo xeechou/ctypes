@@ -110,8 +110,8 @@ anonymous_buff_resize(struct anonymous_buff_t *buff, off_t size)
 
 
 
-off_t
-anonymous_buff_alloc_offset(struct anonymous_buff_t *buff, off_t newsize)
+int
+anonymous_buff_alloc_by_offset(struct anonymous_buff_t *buff, off_t newsize)
 {
 	struct buff_list_t *itr;
 	off_t allocated = 0;
@@ -120,21 +120,21 @@ anonymous_buff_alloc_offset(struct anonymous_buff_t *buff, off_t newsize)
 	}
 	if ((int)buff->size - (int)allocated  < newsize)
 		if (!anonymous_buff_resize(buff, 2 * buff->size + newsize))
-			return 0;
+			return -1;
 
 	//otherwise, we can do the insert
 	itr = malloc(sizeof(*itr));
 	itr->size = newsize;
 	itr->offset = allocated;
 	list_append(&buff->head, &itr->node);
-	return allocated;
+	return itr->offset;
 }
 
 void *
-anonymous_buff_alloc_addr(struct anonymous_buff_t *buff, off_t newsize)
+anonymous_buff_alloc_by_addr(struct anonymous_buff_t *buff, off_t newsize)
 {
-	off_t offset = anonymous_buff_alloc_offset(buff, newsize);
-	return (offset) ? ((char *)buff->addr + offset)  : NULL;
+	off_t offset = anonymous_buff_alloc_by_offset(buff, newsize);
+	return (offset >= 0) ? ((char *)buff->addr + offset)  : NULL;
 }
 
 

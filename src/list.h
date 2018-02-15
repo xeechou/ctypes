@@ -22,13 +22,17 @@ typedef struct list_t {
 } list_t;
 
 
-
+/** use this one if don't need to change the link structure
+ *
+ */
 #define list_for_each(pos, head, member)				\
 	for (pos = container_of_sm((head)->next, pos, member);	\
 	     &pos->member != (head);					\
 	     pos = container_of_sm(pos->member.next, pos, member))
 
-//you can use list_each_safe to clear the memory, I guess
+/** use this one if you are in destructors
+ *
+ */
 #define list_for_each_safe(pos, tmp, head, member)			\
 	for (pos = container_of_sm((head)->next, pos, member),		\
 	     tmp = container_of_sm((pos)->member.next, tmp, member);	\

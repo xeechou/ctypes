@@ -19,7 +19,7 @@ struct anonymous_buff_t {
 	list_t head;
 };
 
-
+//you can borrow the implementation of shm_pool, you need to trunct the file if the buffer is not
 int anonymous_buff_new(struct anonymous_buff_t *buff, off_t size);
 
 void *anonymous_buff_alloc(struct anonymous_buff_t *buff, off_t newsize, int prot, int flags);

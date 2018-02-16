@@ -43,8 +43,22 @@ void dummy_free(void *addr);
 #endif
 
 
-#ifndef num
-#define num(x) (sizeof (x) / sizeof (*x) )
+#ifndef max
+#define max(a, b) \
+	({ __typeof__ (a) _a = (a); \
+		__typeof__ (b) _b = (b); \
+		_a > _b ? _a : _b; })
+#endif
+
+#ifndef min
+#define min(a, b) \
+	({ __typeof__ (a) _a = (a); \
+		__typeof__ (b) _b = (b); \
+		_a < _b ? _a : _b; })
+#endif
+
+#ifndef numof
+#define numof(x) (sizeof (x) / sizeof (*x) )
 #endif
 
 /* from this, you can acess a memeber of a struct with its offset */
@@ -52,6 +66,12 @@ void dummy_free(void *addr);
 #define ptrmemb(ptr, offset, type) (type *)((char *)(ptr) + offset)
 #endif
 
+#ifndef swap
+#define swap(a, b)		      \
+	({ __typeof__ (a) _tmp = (a); \
+		a = (b);	      \
+		b = (_tmp);})
+#endif
 
 #ifdef __cplusplus
 }

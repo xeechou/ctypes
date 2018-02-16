@@ -88,6 +88,8 @@ int
 anonymous_buff_new(struct anonymous_buff_t *buff, off_t size, int prot, int flags)
 {
 	buff->fd = os_create_anonymous_file(size);
+	if (buff->fd < 0)
+		return -1;
 	list_init(&buff->head);
 	buff->size = size;
 	buff->addr = mmap(NULL, size, prot, flags, buff->fd, 0);

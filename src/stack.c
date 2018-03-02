@@ -5,51 +5,38 @@
 #include "stack.h"
 
 void
-stack_init(stack_t *stack, size_t esize, void (*free_func)(void *))
+cstack_init(cstack_t *cstack, size_t esize, void (*free_func)(void *))
 {
-	vector_t *vec = &stack->vec;
+	vector_t *vec = &cstack->vec;
 	vector_init(vec, esize, free_func);
 }
 
-//allor, c'est facile
 void
-stack_pop(stack_t *stack)
+cstack_pop(cstack_t *cstack)
 {
-	vector_t *v = &stack->vec;
-	typedef char elem_t[v->elemsize];
-	//boundary check
-	if (stack->head >v->len)
-		return;
-	//shrink
-	if (stack->head >= (3 * v->len / 4)) {
-		size_t s = (v->len - stack->head) * v->elemsize;
-		void *new_copy = malloc(s);
-		memmove(new_copy, (elem_t *)v->elems + stack->head, s);
-		//the rest, use the free function to clean up
-		for (int i = 0; i < stack->head; i++)
-			v->free(vector_at(v, i));
-		free(v->elems);
-		v->elems = new_copy;
-		v->len = s;
-		v->alloc_len = s;
-	}
-	stack->head++;
+	vector_pop(&cstack->vec);
 }
 
 void
-stack_append(stack_t *stack, void *e)
+cstack_append(cstack_t *cstack, void *e)
 {
-	vector_append(&stack->vec, e);
+	vector_append(&cstack->vec, e);
 }
 
 void *
-stack_top(stack_t *stack)
+ccstack_top(cstack_t *cstack)
 {
-	return vector_at(&stack->vec, stack->head);
+	return vector_at(&cstack->vec, cstack->vec.len-1);
 }
 
 const bool
-stack_empty(stack_t *stack)
+cstack_empty(cstack_t *cstack)
 {
-	return (stack->head >= stack->vec.len || stack->vec.len == 0) ? true : false;
+	return cstack->vec.len <= 0;
+}
+
+void
+cstack_destroy(cstack_t *s)
+{
+	vector_destroy(&s->vec);
 }

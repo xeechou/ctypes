@@ -20,6 +20,7 @@ add_library(ctype STATIC
   src/buffer.c
   src/stack.c
   src/dhash.c
+  src/queue.c
   )
 
 set(CTYPES_LIBRARIES ctype CACHE STRING "ctypes library")

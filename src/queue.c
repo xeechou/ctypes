@@ -9,6 +9,7 @@ queue_init(queue_t *queue, size_t esize, void (*free_func)(void *))
 {
 	vector_t *vec = &queue->vec;
 	vector_init(vec, esize, free_func);
+	queue->head = 0;
 }
 
 //it shouldn't be bug anymore

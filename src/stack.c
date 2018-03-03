@@ -24,7 +24,7 @@ cstack_append(cstack_t *cstack, void *e)
 }
 
 void *
-ccstack_top(cstack_t *cstack)
+cstack_top(cstack_t *cstack)
 {
 	return vector_at(&cstack->vec, cstack->vec.len-1);
 }

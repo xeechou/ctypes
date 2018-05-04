@@ -134,6 +134,13 @@ vector_pop(vector_t *v)
 	shrink_vector_if_need(v);
 }
 
+void vector_resize(vector_t *v, size_t n)
+{
+	v->elems = realloc(v->elems, v->elemsize * n);
+	v->alloc_len = n;
+	v->len = n;
+}
+
 /*
 int main(int argc, char *argv[argc])
 {

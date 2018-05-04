@@ -55,6 +55,12 @@ vector_append(vector_t *v, void *e);
 void
 vector_pop(vector_t *v);
 
+/**
+ * @brief trunk or expand the size of the vector
+ */
+void
+vector_resize(vector_t *v, size_t n);
+
 
 
 

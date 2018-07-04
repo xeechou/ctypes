@@ -58,31 +58,38 @@ void dummy_free(void *addr);
 		_a < _b ? _a : _b; })
 #endif
 
-/* TODO test this ! */
+
 #ifndef abs
 #define abs(x) \
 	({ __typeof__ (x) _x = (x); \
 		_x < 0 ? -_x : _x; })
 #endif
 
-/* TODO test this ! */
 #ifndef clamp
 #define clamp(x, a, b) \
 	({ __typeof__ (x) _x = (x); \
 		min(max(_x, (a)), (b));})
 #endif
 
-/* TODO test this ! */
-#ifndef step
-#define step(x, e)  \
-	({ (x) < e ? __typeof__(x) 0 : __typeof__(x) 1;  })
+/* (1-r) * a + r * b */
+#ifndef mix
+#define mix(r, a, b) \
+	({ __typeof__ (r) _r = clamp(r, 0.0, 1.0); \
+		((1.0 - _r) * (a)) + (_r * (b)); })
 #endif
 
-/* TODO test this ! */
-// #ifndef smoothstep
-// #define smoothstep(x, a, b) \
-//	({})
-// #endif
+/* remember typeof gets replaced to the exact type, so we need to casting */
+#ifndef step
+#define step(x, e)  \
+	({ (x) < (e) ? (__typeof__ (x)) 0 : (__typeof__ (x)) 1;  })
+#endif
+
+#ifndef smoothstep
+#define smoothstep(x, e0, e1) \
+	({ __typeof__ (x) _t = clamp((x - e0) / (e1 - e0), 0.0, 1.0); \
+		_t * _t * (3.0 - 2.0 * _t);})
+#endif
+
 
 #ifndef numof
 #define numof(x) (sizeof (x) / sizeof (*x) )

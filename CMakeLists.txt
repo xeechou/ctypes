@@ -3,6 +3,9 @@ project(ctypes
   VERSION 0.1
   LANGUAGES C)
 
+
+include(CTest)
+
 add_definitions(-D_GNU_SOURCE)
 if (NOT CMAKE_BINARY_DIR)
   set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/build")
@@ -28,3 +31,5 @@ add_library(ctype STATIC
   )
 
 set(CTYPES_LIBRARIES ctype CACHE STRING "ctypes library")
+
+add_subdirectory(test)

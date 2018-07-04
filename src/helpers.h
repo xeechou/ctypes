@@ -8,6 +8,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stddef.h>
 
+/* you may want to use stb_memcheck for the leak checking purpose */
 
 #ifdef USE_PAGE
 #define xmalloc(x) page_malloc(x)
@@ -56,6 +57,32 @@ void dummy_free(void *addr);
 		__typeof__ (b) _b = (b); \
 		_a < _b ? _a : _b; })
 #endif
+
+/* TODO test this ! */
+#ifndef abs
+#define abs(x) \
+	({ __typeof__ (x) _x = (x); \
+		_x < 0 ? -_x : _x; })
+#endif
+
+/* TODO test this ! */
+#ifndef clamp
+#define clamp(x, a, b) \
+	({ __typeof__ (x) _x = (x); \
+		min(max(_x, (a)), (b));})
+#endif
+
+/* TODO test this ! */
+#ifndef step
+#define step(x, e)  \
+	({ (x) < e ? __typeof__(x) 0 : __typeof__(x) 1;  })
+#endif
+
+/* TODO test this ! */
+// #ifndef smoothstep
+// #define smoothstep(x, a, b) \
+//	({})
+// #endif
 
 #ifndef numof
 #define numof(x) (sizeof (x) / sizeof (*x) )

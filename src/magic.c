@@ -1,13 +1,23 @@
+#ifndef CTYPE_MAGIC_HPP
+#define CTYPE_MAGIC_HPP
 
-int abs(int a)
+
+#ifdef __cplusplus
+#extern "C" {
+#endif
+
+static inline int
+abs(int a)
 {
 	int s = a >> sizeof(int) * 8 - 1;	//s == -1 if a < 0, else 0
 	a ^= s;					//any number ^ -1 is one's complement
 	a -= s;					//a - (-1) if a is one's complement
+	return a;
 }
 
 /* return a - (a - b) if a < b, else return a - 0 */
-int max(int a, int b)
+static inline int
+max(int a, int b)
 {
 	int diff = a - b;
 	int dsign = diff >> sizeof(int) * 8 - 1;
@@ -15,7 +25,8 @@ int max(int a, int b)
 }
 
 /* return b + (a - b) if a < b, else return b + 0 */
-int min(int a, int b)
+static inline int
+min(int a, int b)
 {
 	int diff = a - b;
 	int dsign = diff >> sizeof(int) * 8 - 1;
@@ -29,6 +40,11 @@ int min(int a, int b)
 
 #define _conditional_incre((x), (cond), (inc))	(x) += -(cond)  & (inc)
 
+#ifdef __cplusplus
+}
+#endif
+
+
 /* increase pointer if condition */
 /* if (a > b)
  *	*ptr++ = value
@@ -37,3 +53,5 @@ int min(int a, int b)
  * *ptr = value
  * ptr += (a > b)
  */
+
+#endif /* EOF */

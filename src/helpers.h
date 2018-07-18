@@ -5,8 +5,13 @@
 extern "C" {
 #endif
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stddef.h>
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 
 /* you may want to use stb_memcheck for the leak checking purpose */
 
@@ -32,9 +37,26 @@ void dummy_free(void *addr);
 #define deref(type, ptr)		*(type)(ptr)
 #endif
 
+#ifndef instance_of
+#define instance_of(type)   ({ (type *)(0); })
+#endif
+
+#ifndef __type_assert__
+#define __type_assert__(ta, tb)			\
+	({_Static_assert( __builtin_types_compatible_p(ta, tb), "type not equal"); })
+#endif
+
+#ifndef __member_of__
+#define __member_of__(type, mem)	\
+	({ &((type *)0)->mem; })
+#endif
+
+/* how do we make a safer container of */
 #ifndef container_of
 #define container_of(ptr, type, member)					\
-			(type *)(  (char *)(ptr) - offsetof(type, member)   )
+	({  __type_assert__( __typeof__(ptr),				\
+			     __typeof__(&instance_of(type)->member));	\
+		(type *)(  (char *)(ptr) - offsetof(type, member) ); })
 #endif
 
 #ifndef container_of_sm

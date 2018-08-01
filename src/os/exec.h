@@ -5,11 +5,11 @@
 
 
 #ifdef __cplusplus
-#extern "C" {
+extern "C" {
 #endif
 
 
-void fork_exec(int argc, char *argv[]);
+int fork_exec(int argc, char *const argv[]);
 
 
 

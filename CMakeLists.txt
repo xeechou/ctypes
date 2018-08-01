@@ -28,6 +28,7 @@ add_library(ctype STATIC
 
   src/os/buffer.c
   src/os/os-compatibility.c
+  src/os/exec.c
   )
 
 set(CTYPES_LIBRARIES ctype CACHE STRING "ctypes library")

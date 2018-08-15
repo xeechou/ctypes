@@ -80,6 +80,10 @@ void dummy_free(void *addr);
 		_a < _b ? _a : _b; })
 #endif
 
+#ifndef is_inbound
+#define is_inbound(x, l, r) \
+	({ ( (x) > (l) && (x) <= (r) ) ? true : false; })
+#endif
 
 #ifndef abs
 #define abs(x) \

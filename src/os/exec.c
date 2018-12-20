@@ -15,7 +15,7 @@ int fork_exec(int argc, char * const argv[])
 		//child process, we should close all the
 		//setsid, we should probably setsid, close stdin, stdout
 		//what we can do here is changing the envals.
-		execv(argv[0], argv);
+		execvp(argv[0], argv);
 	}
 	return pid;
 }

@@ -66,68 +66,68 @@ void dummy_free(void *addr);
 #endif
 
 
-#ifndef max
-#define max(a, b) \
+#ifndef MAX
+#define MAX(a, b) \
 	({ __typeof__ (a) _a = (a); \
 		__typeof__ (b) _b = (b); \
 		_a > _b ? _a : _b; })
 #endif
 
-#ifndef min
-#define min(a, b) \
+#ifndef MIN
+#define MIN(a, b) \
 	({ __typeof__ (a) _a = (a); \
 		__typeof__ (b) _b = (b); \
 		_a < _b ? _a : _b; })
 #endif
 
-#ifndef is_inbound
-#define is_inbound(x, l, r) \
+#ifndef INBOUND
+#define INBOUND(x, l, r) \
 	({ ( (x) > (l) && (x) <= (r) ) ? true : false; })
 #endif
 
-#ifndef abs
-#define abs(x) \
+#ifndef ABS
+#define ABS(x) \
 	({ __typeof__ (x) _x = (x); \
 		_x < 0 ? -_x : _x; })
 #endif
 
-#ifndef clamp
-#define clamp(x, a, b) \
+#ifndef CLAMP
+#define CLAMP(x, a, b) \
 	({ __typeof__ (x) _x = (x); \
-		min(max(_x, (a)), (b));})
+		MIN(MAX(_x, (a)), (b));})
 #endif
 
 /* (1-r) * a + r * b */
-#ifndef mix
-#define mix(r, a, b) \
-	({ __typeof__ (r) _r = clamp(r, 0.0, 1.0); \
+#ifndef MIX
+#define MIX(r, a, b) \
+	({ __typeof__ (r) _r = CLAMP(r, 0.0, 1.0); \
 		((1.0 - _r) * (a)) + (_r * (b)); })
 #endif
 
 /* remember typeof gets replaced to the exact type, so we need to casting */
-#ifndef step
-#define step(x, e)  \
+#ifndef STEP
+#define STEP(x, e)  \
 	({ (x) < (e) ? (__typeof__ (x)) 0 : (__typeof__ (x)) 1;  })
 #endif
 
-#ifndef smoothstep
-#define smoothstep(x, e0, e1) \
-	({ __typeof__ (x) _t = clamp((x - e0) / (e1 - e0), 0.0, 1.0); \
+#ifndef SMOOTHSTEP
+#define SMOOTHSTEP(x, e0, e1) \
+	({ __typeof__ (x) _t = CLAMP((x - e0) / (e1 - e0), 0.0, 1.0); \
 		_t * _t * (3.0 - 2.0 * _t);})
 #endif
 
 
-#ifndef numof
-#define numof(x) (sizeof (x) / sizeof (*x) )
+#ifndef NUMOF
+#define NUMOF(x) (sizeof (x) / sizeof (*x) )
 #endif
 
-/* from this, you can acess a memeber of a struct with its offset */
-#ifndef ptrmemb
-#define ptrmemb(ptr, offset, type) (type *)((char *)(ptr) + offset)
-#endif
+/* /\* from this, you can acess a memeber of a struct with its offset *\/ */
+/* #ifndef PTRMEMB */
+/* #define PTRMEMB(ptr, offset, type) (type *)((char *)(ptr) + offset) */
+/* #endif */
 
-#ifndef swap
-#define swap(a, b)		      \
+#ifndef SWAP
+#define SWAP(a, b)		      \
 	({ __typeof__ (a) _tmp = (a); \
 		a = (b);	      \
 		b = (_tmp);})

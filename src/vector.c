@@ -28,13 +28,22 @@ vector_init(vector_t *v, size_t esize, freefun f)
 	return true;
 }
 
+void
+vector_init_zero(vector_t *v, size_t esize, freefun f)
+{
+	v->elems = NULL;
+	v->free = f;
+	v->elemsize = esize;
+	v->len = 0;
+	v->alloc_len = 0;
+}
+
+
 size_t
 vector_memsize(const vector_t *v)
 {
 	return v->elemsize * v->alloc_len;
 }
-
-
 
 void
 vector_destroy(vector_t *v)

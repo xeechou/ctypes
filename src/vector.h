@@ -20,8 +20,7 @@ typedef struct {
 size_t vector_memsize(const vector_t *v);
 
 bool vector_init(vector_t *v, size_t esize, freefun f);
-
-
+void vector_init_zero(vector_t *v, size_t esize, freefun f);
 
 void vector_destroy(vector_t *v);
 /**

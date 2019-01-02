@@ -16,8 +16,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CTYPES_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" CACHE PATH "ctypes include directories")
 
-message("${CTYPES_INCLUDE_DIR}")
-
 add_library(ctype STATIC
   src/list.c
   src/vector.c

@@ -82,8 +82,8 @@ shrink_vector_if_need(vector_t *v)
 #ifdef DEBUG_TYPE
 		fprintf(stderr, "vector shrinks at length %d\n", v->len);
 #endif
-		v->elems = realloc(v->elems, v->len);
-		v->alloc_len = v->len;
+		v->elems = realloc(v->elems, v->len * 2 * v->elemsize);
+		v->alloc_len = v->len * 2;
 	}
 	return true;
 }
@@ -136,33 +136,74 @@ vector_append(vector_t *v, void *e)
 void
 vector_pop(vector_t *v)
 {
+	//avoid memory leak
+	void *addr = vector_at(v, v->len-1);
+	if (v->free)
+		v->free(addr);
+	//shrink
 	v->len--;
 	shrink_vector_if_need(v);
 }
 
-void vector_resize(vector_t *v, size_t n)
+void
+vector_resize(vector_t *v, size_t n)
 {
 	v->elems = realloc(v->elems, v->elemsize * n);
 	v->alloc_len = n;
 	v->len = n;
 }
 
-/*
-int main(int argc, char *argv[argc])
+void
+vector_insert(vector_t *v, void *e, off_t idx)
 {
-	struct a {
-		char t[9];
-	};
-	struct a bb;
-	strcpy((char *)&(bb.t), "aaaaaaaa");
+	typedef char elem_t[v->elemsize];
 
-	vector_t v;
-	vector_init(&v, sizeof(struct a), NULL);
-	int i;
-	for (i = 0; i < 100; i++)
-		vector_append(&v, &bb);
-	for (i = 0; i < 100; i++)
-		vector_pop(&v);
-	return 0;
+	if (idx >= v->len)
+		vector_append(v, e);
+	else {
+		int new_size = (v->len+1) >= v->alloc_len ?
+			2 * v->alloc_len : v->alloc_len;
+		void *new_elems = malloc(new_size * v->elemsize);
+
+		memcpy(new_elems, v->elems, (idx * v->elemsize));
+		memcpy((elem_t *)new_elems + idx,
+		       e, v->elemsize);
+		memcpy((elem_t *)new_elems + idx+1,
+			(elem_t *)v->elems + idx,
+			(v->len - idx) * v->elemsize);
+
+		free(v->elems);
+		v->len += 1;
+		v->alloc_len = new_size;
+		v->elems = new_elems;
+	}
 }
-*/
+
+void
+vector_erase(vector_t *v, off_t idx)
+{
+	typedef char elem_t[v->elemsize];
+
+	if (idx >= v->len)
+		vector_pop(v);
+	else {
+		int new_size = (v->len-1) <= v->alloc_len * 0.25 ?
+			v->alloc_len * 0.5 : v->alloc_len;
+
+		//you cannot do pop it will kill the last elem
+		void *new_elems = malloc(v->elemsize * new_size);
+		memcpy(new_elems, v->elems, (idx * v->elemsize));
+		memcpy((elem_t *)new_elems + idx,
+		       (elem_t *)v->elems + idx+1,
+		       (v->len-idx-1) * v->elemsize);
+
+		void *to_erase = vector_at(v, idx);
+		if (v->free)
+			v->free(to_erase);
+		free(v->elems);
+
+		v->elems = new_elems;
+		v->len -= 1;
+		v->alloc_len = new_size;
+	}
+}

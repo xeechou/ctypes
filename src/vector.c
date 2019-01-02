@@ -18,10 +18,7 @@ vector_init(vector_t *v, size_t esize, freefun f)
 	v->elems = (void *) malloc(esize * 4);
 	if (!v->elems)
 		return false;
-	if (f)
-		v->free = f;
-	else
-		v->free = dummy_free;
+	v->free = f ? f : dummy_free;
 	v->elemsize = esize;
 	v->len = 0;
 	v->alloc_len = 4;
@@ -32,7 +29,7 @@ void
 vector_init_zero(vector_t *v, size_t esize, freefun f)
 {
 	v->elems = NULL;
-	v->free = f;
+	v->free = f ? f : dummy_free;
 	v->elemsize = esize;
 	v->len = 0;
 	v->alloc_len = 0;

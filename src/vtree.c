@@ -1,10 +1,12 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "vector.h"
 #include "stack.h"
 #include "tree.h"
+#include "queue.h"
 
 void *
 vtree_container(struct vtree_node *p)
@@ -19,8 +21,6 @@ vtree_node_init(struct vtree_node *n, unsigned int offset)
 	vector_init_zero(&n->children, sizeof(struct vtree_node *), NULL);
 	n->parent = NULL;
 }
-
-
 
 
 /*
@@ -38,14 +38,41 @@ vtree_sort(struct vtree_node *p, int (*cmpfun)(const void *, const void *))
 	}
 }
 
-struct vtree_node *
-vtree_find(struct vtree_node *p, struct vtree_node *key,
-	   int (*cmpfun)(const void *, const void *))
+void
+vtree_node_shift(struct vtree_node *v, bool forward)
 {
-	//you can uses the same compare function in sort
-	return bsearch(key, p->children.elems,
-		       p->children.len, p->children.elemsize,
-		       cmpfun);
+	if (!v->parent)
+		return;
+	int index = 0;
+	for (int i = 0; i < v->parent->children.len; i++) {
+		if (vtree_ith_child(v->parent, i) == v) {
+			index = i;
+			break;
+		}
+	}
+	int step = forward ? 1 : -1;
+	if (index+step < 0 || index + step >= v->parent->children.len)
+		return;
+	//swap the element
+	struct vtree_node **self =
+		(struct vtree_node **)vector_at(&v->parent->children, index);
+	struct vtree_node **another =
+		(struct vtree_node **)vector_at(&v->parent->children, index + step);
+	struct vtree_node *tmp = *another;
+	*another = *self;
+	*self = tmp;
+}
+
+off_t
+vtree_find(struct vtree_node *p, const void *data,
+	   int (*cmpfun)(const void *, const struct vtree_node *))
+{
+	for (int i = 0; i < p->children.len; i++) {
+		struct vtree_node *n = vtree_ith_child(p, i);
+		if (!cmpfun(data, n))
+			return i;
+	}
+	return -1;
 }
 
 void
@@ -57,8 +84,8 @@ vtree_print(const struct vtree_node *p,
 	print(p);
 
 	for (int i = 0; i < p->children.len; i++) {
-		const struct vtree_node **node = cvector_at(&p->children, i);
-		vtree_print(*node, print, indent+1);
+		struct vtree_node *node = vtree_ith_child((struct vtree_node *)p, i);
+		vtree_print(node, print, indent+1);
 	}
 }
 
@@ -67,7 +94,8 @@ vtree_destroy(struct vtree_node *p, void (*freefun)(void *))
 {
 	for (int i = 0; i < p->children.len; i++) {
 		struct vtree_node **n = vector_at(&p->children, i);
-		vtree_destroy(*n, freefun);
+		if (*n)
+			vtree_destroy(*n, freefun);
 	}
 	vector_destroy(&p->children);
 	if (freefun)
@@ -75,4 +103,51 @@ vtree_destroy(struct vtree_node *p, void (*freefun)(void *))
 	return;
 }
 
-//okay I gotta test this
+int
+vtree_iterate(const struct vtree_node *root, void *data,
+		  void (*visit)(const struct vtree_node *, void *))
+{
+	int count = 0;
+	cstack_t stack;
+	cstack_init(&stack, sizeof(struct vtree_node *), NULL);
+	cstack_append(&stack, &root);
+	while (!cstack_empty(&stack)) {
+		struct vtree_node *node = *(struct vtree_node **)cstack_top(&stack);
+		cstack_pop(&stack);
+		count += 1;
+		visit(node, data);
+		for (int i = 0; i < node->children.len; i++) {
+			struct vtree_node *n = vtree_ith_child(node, i);
+			/* printf("%p\n", n); */
+			cstack_append(&stack, &n);
+		}
+	}
+	return count;
+}
+
+
+struct vtree_node *
+vtree_search(const struct vtree_node *root, void *data,
+	     int (*cmpfun)(const void *, const struct vtree_node *))
+{
+	struct vtree_node *node = NULL;
+	//we do the BFS search
+	queue_t queue;
+	queue_init(&queue, sizeof(struct vtree_node *), NULL);
+	queue_append(&queue, &root);
+	while (!queue_empty(&queue)) {
+		struct vtree_node *curr = *(struct vtree_node **)
+			queue_top(&queue);
+		queue_pop(&queue);
+		if (!cmpfun(data, curr)) {
+			node = curr;
+			break;
+		}
+		for (int i = 0; i < curr->children.len; i++) {
+			struct vtree_node *n = vtree_ith_child(curr, i);
+			queue_append(&queue, &n);
+		}
+	}
+	queue_destroy(&queue);
+	return node;
+}

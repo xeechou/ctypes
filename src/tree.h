@@ -63,13 +63,39 @@ vtree_node_add_child(struct vtree_node* p, struct vtree_node *c)
 	*e = c;
 }
 
+static inline void
+vtree_node_insert(struct vtree_node *p, struct vtree_node *c, off_t idx)
+{
+	vector_insert(&p->children, &c, idx);
+	c->parent = p;
+}
+
+static inline void
+vtree_node_remove(struct vtree_node *p, off_t i)
+{
+	vector_erase(&p->children, i);
+}
+
+/* shift vtree_node by step */
+void vtree_node_shift(struct vtree_node *v, bool forward);
 
 //the argument should be two vtree node, you should use container to convert it to your own type
 void vtree_sort(struct vtree_node *p, int (*cmpfun)(const void *, const void *));
-struct vtree_node *vtree_find(struct vtree_node *p, struct vtree_node *n,
-			      int (*cmpfun)(const void *, const void *));
+
+off_t vtree_find(struct vtree_node *p, const void *,
+		 int (*cmpfun)(const void *, const struct vtree_node *));
+
 void vtree_print(const struct vtree_node *p,
 		 void (*print)(const struct vtree_node *), int indent);
+
+//a DFS/BFS visiting algorithm
+int vtree_iterate(const struct vtree_node *root, void *data,
+		  void (*visit)(const struct vtree_node *, void *));
+
+struct vtree_node *
+vtree_search(const struct vtree_node *root, void *data,
+	     int (*cmpfun)(const void *, const struct vtree_node *));
+
 
 /* destroy the tree depth first */
 void vtree_destroy(struct vtree_node *p, void (*freefun)(void *));

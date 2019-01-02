@@ -55,6 +55,13 @@ void
 vector_pop(vector_t *v);
 
 /**
+ * @brief insert at specific location
+ */
+void vector_insert(vector_t *v, void *e, off_t idx);
+
+void vector_erase(vector_t *v, off_t idx);
+
+/**
  * @brief trunk or expand the size of the vector
  */
 void

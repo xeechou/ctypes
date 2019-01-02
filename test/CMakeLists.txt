@@ -2,6 +2,7 @@ include_directories(${CTYPES_INCLUDE_DIR})
 
 set(TEST_SRCS
   test_smallfuncs.c
+  test_vtree.c
   )
 
 foreach(src ${TEST_SRCS})

@@ -100,6 +100,10 @@ vtree_search(const struct vtree_node *root, void *data,
 /* destroy the tree depth first */
 void vtree_destroy(struct vtree_node *p, void (*freefun)(void *));
 
+/* destroy all the children of the tree but leaves p alive. ONLY Use this if p
+ * is not allocated on the heap */
+void vtree_destroy_children(struct vtree_node *p, void (*freefun)(void *));
+
 
 
 //maybe you need a search tree

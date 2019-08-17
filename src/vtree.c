@@ -103,6 +103,18 @@ vtree_destroy(struct vtree_node *p, void (*freefun)(void *))
 	return;
 }
 
+void
+vtree_destroy_children(struct vtree_node *p, void (*freefun)(void *))
+{
+	for (int i = 0; i < p->children.len; i++) {
+		struct vtree_node **n = vector_at(&p->children, i);
+		if (*n)
+			vtree_destroy(*n, freefun);
+	}
+	vector_destroy(&p->children);
+}
+
+
 int
 vtree_iterate(const struct vtree_node *root, void *data,
 		  void (*visit)(const struct vtree_node *, void *))

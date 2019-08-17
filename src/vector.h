@@ -31,6 +31,21 @@ void vector_destroy(vector_t *v);
 void *vector_newelem(vector_t *v);
 
 /**
+ * @brief iterator over an array
+ *
+ * taken from wl_array, provides a easier way to iterator through a vector
+ */
+#define vector_for_each(pos, v)			\
+	for (pos = (v)->elems;						\
+	     (const char *) pos < ((const char *) (v)->elems + (v)->len * (v)->elemsize);\
+	     (pos)++)
+
+/**
+ * @brief deep copy a vector
+ */
+void vector_copy(vector_t *dst, vector_t *src);
+
+/**
  * @brief ability to random access the vector
  * @return (type *) of the type you inserted
  */

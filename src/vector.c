@@ -154,6 +154,15 @@ vector_resize(vector_t *v, size_t n)
 }
 
 void
+vector_copy(vector_t *dst, vector_t *src)
+{
+	dst->elemsize = src->elemsize;
+	dst->free = src->free;
+	vector_resize(dst, src->len);
+	memcpy(dst->elems, src->elems, src->elemsize * src->len);
+}
+
+void
 vector_insert(vector_t *v, void *e, off_t idx)
 {
 	typedef char elem_t[v->elemsize];

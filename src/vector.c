@@ -50,6 +50,7 @@ vector_destroy(vector_t *v)
 	for (int i = 0; i < v->len; i++)
 		v->free(p++);
 	free(v->elems);
+	vector_init_zero(v, v->elemsize, NULL);
 }
 
 //we can actually make a general expand function

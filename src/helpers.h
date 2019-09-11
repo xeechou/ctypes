@@ -133,6 +133,12 @@ void dummy_free(void *addr);
 		b = (_tmp);})
 #endif
 
+#ifndef OPTION
+/* option directive give us ability to define types like std::option */
+#define OPTION(type, name) \
+	struct tw_option_ ## name { bool valid; type name; }
+#endif
+
 #ifdef __cplusplus
 }
 #endif

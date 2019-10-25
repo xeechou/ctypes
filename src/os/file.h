@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <stdio.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -26,6 +27,16 @@ is_file_exist(const char *abs_path)
 	return false;
 }
 
+static inline bool
+is_dir_exist(const char *abs_path)
+{
+	DIR *d = opendir(abs_path);
+	if (!d)
+		return false;
+	closedir(d);
+	return true;
+}
+
 
 static inline struct dirent *
 dir_find_pattern(DIR *dir, const char *format, ...)
@@ -42,6 +53,24 @@ dir_find_pattern(DIR *dir, const char *format, ...)
 			break;
 	}
 	return drnt;
+}
+
+static inline char *
+path_concat(char *path, int max_len, int narg, ...)
+{
+	va_list ap;
+
+	va_start(ap, narg);
+	for (int i = narg; i > 0; i--) {
+		if (strlen(path) >= max_len)
+			break;
+		const char *node =
+			va_arg(ap, const char *);
+		strcat(path, "/");
+		strcat(path, node);
+	}
+	va_end(ap);
+	return path;
 }
 
 

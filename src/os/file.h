@@ -37,6 +37,12 @@ is_dir_exist(const char *abs_path)
 	return true;
 }
 
+static inline bool
+is_file_type(const char *f, const char *niddle)
+{
+	return strstr(f, niddle) + strlen(niddle) ==
+		f + strlen(f);
+}
 
 static inline struct dirent *
 dir_find_pattern(DIR *dir, const char *format, ...)

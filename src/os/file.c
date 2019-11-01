@@ -1,5 +1,9 @@
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+#include <linux/limits.h>
+#include <errno.h>
+#include <sys/stat.h>
 #include "file.h"
 
 size_t
@@ -34,4 +38,41 @@ is_dir_empty(DIR *d)
 	}
 	seekdir(d, curr);
 	return (count <= 2);
+}
+
+
+int mkdir_p(const char *path, mode_t mode)
+{
+	const size_t len = strlen(path);
+	char _path[PATH_MAX];
+	char *p;
+	struct stat buf;
+
+	errno = 0;
+
+	if (len > sizeof(_path)-1) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+	strcpy(_path, path);
+	for (p = _path+1; *p; p++) {
+		if (*p == '/') {
+			*p = '\0';
+
+			if (mkdir(_path, S_IRWXU) != 0) {
+				stat(_path, &buf);
+				if (errno != EEXIST ||
+				    (errno == EEXIST && !S_ISDIR(buf.st_mode)))
+					return -1;
+			}
+			*p = '/';
+		}
+	}
+	if (mkdir(_path, mode) != 0) {
+		stat(_path, &buf);
+		if (errno != EEXIST ||
+		    (errno == EEXIST && !S_ISDIR(buf.st_mode)))
+			return -1;
+	}
+	return 0;
 }

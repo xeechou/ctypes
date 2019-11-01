@@ -16,6 +16,8 @@ size_t file_read(const char *f, char *mem, int max_size);
 
 bool is_dir_empty(DIR *dir);
 
+int mkdir_p(const char *path, mode_t mode);
+
 static inline bool
 is_file_exist(const char *abs_path)
 {

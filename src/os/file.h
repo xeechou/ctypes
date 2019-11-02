@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <errno.h>
 
 //file related operations
 
@@ -26,17 +27,20 @@ is_file_exist(const char *abs_path)
 		fclose(f);
 		return true;
 	}
+	errno = 0;
 	return false;
 }
 
 static inline bool
 is_dir_exist(const char *abs_path)
 {
-	DIR *d = opendir(abs_path);
-	if (!d)
-		return false;
-	closedir(d);
-	return true;
+	DIR *d;
+	if ((d = opendir(abs_path)) != NULL) {
+		closedir(d);
+		return true;
+	}
+	errno = 0;
+	return false;
 }
 
 static inline bool

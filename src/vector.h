@@ -46,6 +46,12 @@ void *vector_newelem(vector_t *v);
 void vector_copy(vector_t *dst, vector_t *src);
 
 /**
+ * @brief deep copy with copy constructor
+ */
+void vector_copy_complex(vector_t *dst, vector_t *src,
+			 void(*assign)(void *, const void *));
+
+/**
  * @brief ability to random access the vector
  * @return (type *) of the type you inserted
  */

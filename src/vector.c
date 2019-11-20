@@ -164,6 +164,17 @@ vector_copy(vector_t *dst, vector_t *src)
 }
 
 void
+vector_copy_complex(vector_t *dst, vector_t *src,
+		    void(*assign)(void *, const void *))
+{
+	dst->elemsize = src->elemsize;
+	dst->free = src->free;
+	vector_resize(dst, src->len);
+	for (int i = 0; i < dst->len; i++)
+		assign(vector_at(dst, i), vector_at(src, i));
+}
+
+void
 vector_insert(vector_t *v, void *e, off_t idx)
 {
 	typedef char elem_t[v->elemsize];

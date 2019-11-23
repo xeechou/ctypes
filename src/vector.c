@@ -170,6 +170,7 @@ vector_copy_complex(vector_t *dst, vector_t *src,
 	dst->elemsize = src->elemsize;
 	dst->free = src->free;
 	vector_resize(dst, src->len);
+	memset(dst->elems, 0, dst->len * dst->elemsize);
 	for (int i = 0; i < dst->len; i++)
 		assign(vector_at(dst, i), vector_at(src, i));
 }

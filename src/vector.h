@@ -85,11 +85,12 @@ void vector_erase(vector_t *v, off_t idx);
 /**
  * @brief trunk or expand the size of the vector
  */
-void
-vector_resize(vector_t *v, size_t n);
+void vector_resize(vector_t *v, size_t n);
 
-
-
+/**
+ * @brief expand the allocation of the vector
+ */
+void vector_reserve(vector_t *v, size_t n);
 
 
 #ifdef __cplusplus

@@ -155,6 +155,16 @@ vector_resize(vector_t *v, size_t n)
 }
 
 void
+vector_reserve(vector_t *v, size_t n)
+{
+	if (n <= v->alloc_len)
+		return;
+	int old_len = v->len;
+	vector_resize(v, n);
+	v->len = old_len;
+}
+
+void
 vector_copy(vector_t *dst, vector_t *src)
 {
 	dst->elemsize = src->elemsize;

@@ -38,7 +38,7 @@ void *vector_newelem(vector_t *v);
 #define vector_for_each(pos, v)			\
 	for (pos = (v)->elems;						\
 	     (const char *) pos < ((const char *) (v)->elems + (v)->len * (v)->elemsize);\
-	     (pos)++)
+	     pos = (typeof(pos))((const char *)pos + (v)->elemsize))
 
 /**
  * @brief deep copy a vector

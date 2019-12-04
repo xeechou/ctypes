@@ -27,7 +27,7 @@ add_library(ctype STATIC
   src/os/exec.c
   src/os/file.c)
 
-target_link_directories(ctype
+target_include_directories(ctype
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 #keep the old names for compatibilities

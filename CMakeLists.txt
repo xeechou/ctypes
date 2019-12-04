@@ -14,10 +14,6 @@ endif()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-
-find_path(CTYPES_INCLUDE_DIR helpers.h
-  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
-
 add_library(ctype STATIC
   src/list.c
   src/vector.c
@@ -31,6 +27,12 @@ add_library(ctype STATIC
   src/os/exec.c
   src/os/file.c)
 
+target_link_directories(ctype
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+#keep the old names for compatibilities
+find_path(CTYPES_INCLUDE_DIR helpers.h
+  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(CTYPES_LIBRARIES ctype CACHE STRING "ctypes library")
 
 add_subdirectory(test)

@@ -4,6 +4,7 @@ set(TEST_SRCS
   test_smallfuncs.c
   test_vtree.c
   test_vector.c
+  test_hash.c
   )
 
 foreach(src ${TEST_SRCS})
@@ -11,6 +12,6 @@ foreach(src ${TEST_SRCS})
   add_executable(${tgt}
     ${src})
   target_link_libraries(${tgt}
-    ${CTYPES_LIBRARIES})
+    ctypes)
   add_test(${tgt} ${tgt})
 endforeach()

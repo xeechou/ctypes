@@ -82,7 +82,7 @@ queue_destroy(queue_t *q)
 	vector_destroy(&q->vec);
 }
 
-const bool
+bool
 queue_empty(queue_t *queue)
 {
 	return (queue->head >= queue->vec.len || queue->vec.len == 0) ? true : false;

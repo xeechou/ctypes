@@ -99,7 +99,7 @@ path_concat(char *path, int max_len, int narg, ...)
 
 	va_start(ap, narg);
 	for (int i = narg; i > 0; i--) {
-		if (strlen(path) >= max_len)
+		if (strlen(path) >= (unsigned)max_len)
 			break;
 		const char *node =
 			va_arg(ap, const char *);

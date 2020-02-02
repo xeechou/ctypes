@@ -54,7 +54,7 @@ cstack_top(cstack_t *cstack)
 	return vector_at(&cstack->vec, cstack->vec.len-1);
 }
 
-const bool
+bool
 cstack_empty(cstack_t *cstack)
 {
 	return cstack->vec.len <= 0;

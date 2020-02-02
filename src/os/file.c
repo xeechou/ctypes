@@ -39,7 +39,8 @@ file_read(const char *f, char *mem, int max_size)
 	fseek(stream, 0, SEEK_END);
 	size_t size = ftell(stream);
 	fseek(stream, 0, SEEK_SET);
-	int _size = (max_size > size+1) ? size : max_size - 1;
+	size_t _size = ((unsigned)max_size > size+1) ?
+		size : (unsigned)max_size - 1;
 	if (mem)
 		fread(mem, sizeof(char), _size, stream);
 	mem[_size] = '\0';

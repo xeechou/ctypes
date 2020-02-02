@@ -16,7 +16,7 @@ char *randstring(size_t length) { // length should be qualified as const if you 
 		randomString = malloc(length +1); // I removed your `sizeof(char) * (length +1)` as sizeof(char) == 1, cf. C99
 
 		if (randomString) {
-			for (int n = 0;n < length;n++) {
+			for (int n = 0;n < (signed)length;n++) {
 				int key = rand() % (int) (sizeof(charset) -1);
 				randomString[n] = charset[key];
 			}

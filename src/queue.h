@@ -52,7 +52,7 @@ void queue_append(queue_t *queue, void *e);
 
 void *queue_top(queue_t *queue);
 
-const bool queue_empty(queue_t *queue);
+bool queue_empty(queue_t *queue);
 
 void queue_destroy(queue_t *q);
 

@@ -54,7 +54,7 @@ void cstack_append(cstack_t *stack, void *e);
 
 void *cstack_top(cstack_t *stack);
 
-const bool cstack_empty(cstack_t *stack);
+bool cstack_empty(cstack_t *stack);
 
 void cstack_destroy(cstack_t *s);
 

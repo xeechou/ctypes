@@ -7,10 +7,10 @@
  * test the dhash data structure for memory leak
  */
 
-char *randstring(size_t length) { // length should be qualified as const if you follow a rigorous standard
-
+char *randstring(size_t length) {
+	// length should be qualified as const if you follow a rigorous standard
 	static char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.-#'?!";
-	char *randomString;   // initializing to NULL isn't necessary as malloc() returns NULL if it couldn't allocate memory as requested
+	char *randomString = NULL;
 
 	if (length) {
 		randomString = malloc(length +1); // I removed your `sizeof(char) * (length +1)` as sizeof(char) == 1, cf. C99

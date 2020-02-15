@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
 	vtree_iterate(&test->node, NULL, print_node1);
 	struct vtree_node *result = vtree_search(&test->node, (void *)32, search_number);
 	struct test_tree *tr = container_of(result, struct test_tree, node);
+	(void)tr;
 	assert(tr->val == 32);
 
 	/* int b = 10; */

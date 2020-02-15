@@ -22,5 +22,6 @@ int main(int argc, char *argv[])
 	assert(MIX(3.0, 3.0, 5.0) == 5.0);
 	assert(SMOOTHSTEP(2.0, 1.0, 3.0) == 0.5);
 	assert((SMOOTHSTEP(1.8, 1.0, 3.0) - 0.35200 < 0.00001));
+	(void)str_arr;
 	return 0;
 }

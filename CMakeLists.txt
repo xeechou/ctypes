@@ -4,8 +4,6 @@ project(ctypes
   LANGUAGES C)
 
 
-include(CTest)
-
 add_definitions(-D_GNU_SOURCE)
 if (NOT CMAKE_BINARY_DIR)
   set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/build")

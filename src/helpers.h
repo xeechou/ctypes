@@ -164,6 +164,13 @@ void dummy_free(void *addr);
 	struct tw_option_ ## name { bool valid; type name; }
 #endif
 
+/* get rid of annoying assert unsued variables */
+#ifdef NDEBUG
+#define ASSERT(x) do { (void)sizeof(x);} while (0)
+#else
+#define ASSERT(x) assert(x)
+#endif
+
 #ifdef __cplusplus
 }
 #endif

@@ -174,8 +174,19 @@ vector_pop(vector_t *v)
 void
 vector_resize(vector_t *v, size_t n)
 {
-	v->elems = realloc(v->elems, v->elemsize * n);
-	v->alloc_len = n;
+	size_t new_size;
+
+	if ((size_t)v->alloc_len >= n || n == 0) {
+		v->len = n;
+		return;
+	}
+
+	new_size = (v->len) == 0 ? 1 : v->len;
+	while (new_size < n)
+		new_size *= 2;
+
+	v->elems = realloc(v->elems, v->elemsize * new_size);
+	v->alloc_len = new_size;
 	v->len = n;
 }
 

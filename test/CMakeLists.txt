@@ -16,7 +16,7 @@ foreach(src ${TEST_SRCS})
     ${src})
   target_link_libraries(${tgt}
     ctypes)
-  add_test(${tgt} ${tgt})
+  add_test(NAME test_ctype_${tgt} COMMAND ${tgt})
   list(APPEND CTYPES_TESTS ${tgt})
 endforeach()
 

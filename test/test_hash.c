@@ -36,12 +36,15 @@ void strfree(void *p)
 
 int main(int argc, char *argv[])
 {
+	int data = 1;
 	dhashtab_t table;
-	dhash_init(&table, hash_djb2, hash_sdbm, hash_cmp_str, sizeof(char *), strfree);
+	dhash_init(&table, hash_djb2, hash_sdbm, hash_cmp_str,
+	           sizeof(char *), sizeof(int),
+	           strfree, NULL);
 	for (int i = 0; i < 100; i++) {
 		char *rand_string = randstring(100);
 //		printf("%s\n", rand_string);
-		dhash_insert(&table, &rand_string);
+		dhash_insert(&table, &rand_string, &data);
 	}
 //	for (int i = 0; i < table.indices.len; i++) {
 //		fprintf(stderr, "%s\n", *(char **)cvector_at(&table.data, *(int *)cvector_at(&table.indices, i)));

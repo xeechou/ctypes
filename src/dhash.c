@@ -27,7 +27,8 @@
 #include <string.h>
 #include "hash.h"
 
-static uint64_t next_prime(uint64_t n)
+static uint64_t
+next_prime(uint64_t n)
 {
 	//make it odd
 	if (n % 2 == 0)
@@ -49,26 +50,38 @@ static uint64_t next_prime(uint64_t n)
 static void
 expand_dhasht_if_needed(dhashtab_t *table)
 {
-	if (table->indices.elemsize == 0)
-		vector_init(&table->indices, sizeof(int), NULL);
-	if (table->indices.len >= table->data.alloc_len / 2) {
-		vector_t backup;
-		vector_t backup_idx;
-		memcpy(&backup, &table->data, sizeof(vector_t));
-		memcpy(&backup_idx, &table->indices, sizeof(vector_t));
-		//dont free the elements here
-		backup.free = dummy_free;
-		vector_init(&table->indices, sizeof(int), NULL);
+	typedef unsigned char key_t[table->keys.elemsize];
+	key_t null_key;
 
-		table->data.alloc_len = next_prime(table->data.alloc_len);
-		table->data.len = table->data.alloc_len;
-		table->data.elems = xcalloc(table->data.alloc_len, table->data.elemsize);
-		for (int i = 0; i < backup_idx.len; i++) {
-			int idx = *(int *)cvector_at(&backup_idx, i);
-			dhash_insert(table, cvector_at(&backup, idx));
+	memset(&null_key, 0, sizeof(key_t));
+	if ((int)table->allocated >= table->data.len / 2) {
+		vector_t backup_keys = table->keys;
+		vector_t backup_elems = table->data;
+		int new_size = next_prime(backup_keys.len);
+
+		vector_init_zero(&table->keys, table->keys.elemsize,
+		                 table->keys.free);
+		vector_init_zero(&table->data, table->data.elemsize,
+		                 table->data.free);
+		vector_reserve(&table->keys, new_size);
+		vector_reserve(&table->data, new_size);
+		table->keys.len = new_size;
+		table->data.len = new_size;
+
+		//have to make sure keys filled with zero
+		memset(table->keys.elems, 0,
+		       table->keys.len * table->keys.elemsize);
+
+		for (int i = 0; i < backup_keys.len; i++) {
+			key_t *key =  vector_at(&backup_keys, i);
+			void *data = vector_at(&backup_elems, i);
+			if (memcmp(key, &null_key, sizeof(key_t)))
+				dhash_insert(table, key, data);
 		}
-		vector_destroy(&backup);
-		vector_destroy(&backup_idx);
+		backup_keys.free = dummy_free;
+		backup_elems.free = dummy_free;
+		vector_destroy(&backup_keys);
+		vector_destroy(&backup_elems);
 	}
 }
 
@@ -79,13 +92,13 @@ expand_dhasht_if_needed(dhashtab_t *table)
  * data: if hash_empty or eq. Then you need to compare it yourself
  */
 static int
-_dhash_search(dhashtab_t *t, const void *elem)
+_dhash_search(dhashtab_t *t, const void *key)
 {
-	uint64_t hv0 = t->hash0(elem);
-	uint64_t hv1 = t->hash1(elem);
-	for (int i = 0; i < t->data.alloc_len; i++) {
-		int idx = (hv0 + i * hv1) % t->data.alloc_len;
-		int c = t->cmp(elem, cvector_at(&t->data, idx));
+	uint64_t hv0 = t->hash0(key);
+	uint64_t hv1 = t->hash1(key);
+	for (int i = 0; i < t->keys.len; i++) {
+		int idx = (hv0 + i * hv1) % t->data.len;
+		int c = t->cmp(key, cvector_at(&t->keys, idx));
 		switch(c) {
 		case hash_empty:
 			return idx;
@@ -105,39 +118,42 @@ _dhash_search(dhashtab_t *t, const void *elem)
  * data: found
  */
 const void *
-dhash_search(dhashtab_t *t, const void *elem)
+dhash_search(dhashtab_t *t, const void *key)
 {
-	int idx = _dhash_search(t, elem);
-	if (idx == -1 || t->cmp(elem, cvector_at(&t->data, idx)) == hash_empty)
+	int idx = _dhash_search(t, key);
+	if (idx == -1 || t->cmp(key, cvector_at(&t->keys, idx)) == hash_empty)
 		return NULL;
 	else
 		return cvector_at(&t->data, idx);
 }
 
 void
-dhash_insert(dhashtab_t *t, const void *elem)
+dhash_insert(dhashtab_t *t, const void *key, const void *elem)
 {
 	expand_dhasht_if_needed(t);
-	int idx = _dhash_search(t, elem);
+	int idx = _dhash_search(t, key);
+	void *keyaddr = vector_at(&t->keys, idx);
 	void *addr = vector_at(&t->data, idx);
-	hash_cmp_val r = t->cmp(elem, addr);
+	hash_cmp_val r = t->cmp(key, keyaddr);
 	if (r == hash_empty) {
+		memcpy(keyaddr, key, t->keys.elemsize);
 		memcpy(addr, elem, t->data.elemsize);
-		*(int *)vector_newelem(&t->indices) = idx;
+		t->allocated += 1;
 	}
 }
 
 
 void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t cmp,
-		size_t esize, freefun free)
+                size_t keysize, size_t esize, freefun keyfree, freefun datafree)
 {
-	t->data.elemsize = esize;
-	t->data.alloc_len = 11;
-	t->data.elems = xcalloc(t->data.alloc_len, esize);
+	vector_init_zero(&t->keys, keysize, keyfree);
+	vector_init_zero(&t->data, esize, datafree);
+	vector_reserve(&t->data, 11);
+	vector_reserve(&t->keys, 11);
 	t->data.len = 11;
-	t->data.free = (free) ? free : dummy_free;
-
-	vector_init(&t->indices, sizeof(int), NULL);
+	t->keys.len = 11;
+	memset(t->keys.elems, 0,
+	       t->keys.len * t->keys.elemsize);
 
 	t->hash0 = h0;
 	t->hash1 = h1;
@@ -146,12 +162,21 @@ void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t c
 
 void dhash_destroy(dhashtab_t *t)
 {
-	for (int i = 0; i < t->indices.len; i++) {
-		void *p = vector_at(&t->data, *(int *)cvector_at(&t->indices, i));
-		t->data.free(p);
+	if (t->keys.free != dummy_free || t->data.free != dummy_free) {
+		for (int i = 0; i < t->keys.len; i++) {
+			void *key = vector_at(&t->keys, i);
+			void *dat = vector_at(&t->data, i);
+
+			if (key) {
+				t->keys.free(key);
+				t->data.free(dat);
+			}
+		}
 	}
-	xfree(t->data.elems);
-	vector_destroy(&t->indices);
+	free(t->keys.elems);
+	free(t->data.elems);
+	vector_init_zero(&t->keys, t->keys.elemsize, t->keys.free);
+	vector_init_zero(&t->data, t->data.elemsize, t->data.free);
 }
 
 

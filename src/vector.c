@@ -193,11 +193,15 @@ vector_resize(vector_t *v, size_t n)
 void
 vector_reserve(vector_t *v, size_t n)
 {
+	void *data;
 	if (n <= (unsigned)v->alloc_len)
 		return;
-	int old_len = v->len;
-	vector_resize(v, n);
-	v->len = old_len;
+
+	data = realloc(v->elems, v->elemsize * n);
+	if (data) {
+		v->elems = data;
+		v->alloc_len = n;
+	}
 }
 
 void

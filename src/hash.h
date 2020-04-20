@@ -85,7 +85,7 @@ dhash_insert(dhashtab_t *t, const void *key, const void *elem);
 void
 dhash_destroy(dhashtab_t *t);
 
-const void *
+void *
 dhash_search(dhashtab_t *t, const void *key);
 
 

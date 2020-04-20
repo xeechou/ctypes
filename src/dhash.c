@@ -117,14 +117,14 @@ _dhash_search(dhashtab_t *t, const void *key)
  * NULL: not found,
  * data: found
  */
-const void *
+void *
 dhash_search(dhashtab_t *t, const void *key)
 {
 	int idx = _dhash_search(t, key);
 	if (idx == -1 || t->cmp(key, cvector_at(&t->keys, idx)) == hash_empty)
 		return NULL;
 	else
-		return cvector_at(&t->data, idx);
+		return vector_at(&t->data, idx);
 }
 
 void
@@ -154,6 +154,7 @@ void dhash_init(dhashtab_t *t, hash_func_t h0, hash_func_t h1, hash_cmp_func_t c
 	t->keys.len = 11;
 	memset(t->keys.elems, 0,
 	       t->keys.len * t->keys.elemsize);
+	t->allocated = 0;
 
 	t->hash0 = h0;
 	t->hash1 = h1;

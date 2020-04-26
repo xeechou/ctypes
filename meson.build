@@ -23,10 +23,6 @@ foreach a : global_args_maybe
   endif
 endforeach
 
-if get_option('buildtype') == 'release' and cc.has_argument('-fvisibility=hidden')
-  global_args += '-fvisibility=hidden'
-endif
-
 ctypes_srcs = [
   'src/list.c',
   'src/vector.c',

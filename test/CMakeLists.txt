@@ -7,8 +7,8 @@ set(TEST_SRCS
   test_vtree.c
   test_vector.c
   test_hash.c
+  test_list.c
   )
-
 
 foreach(src ${TEST_SRCS})
   get_filename_component(tgt ${src} NAME_WE)

@@ -115,35 +115,6 @@ list_swap(list_t *one, list_t *another)
 	another->next->prev = one;
 }
 
-/* Insert a new header to the list_t @header */
-//static inline void
-//list_insert_header(list_t **header, list_t *elem)
-//{
-//	list_append_elem(header, elem);
-//	*header = elem;
-//}
-/*
-static inline void
-list_remove_update(list_t **header, list_t *elem)
-{
-	//remove one node from the list_t and update the header if necessary,
-	//there could be following boundary situations:
-	//0) *elem == header, but not only elem
-	//1) *elem is the only elem in the list
-	list_t *prev = elem->prev;
-	list_t *next = elem->next;
-	prev->next = next;
-	next->prev = prev;
-	//case 0: elem == header
-	if (elem == *header)
-		*header = next;
-	//case 1: the last elem
-	//there is no assignment to elem directly, so elem->next shouldn't change
-	if (elem->next == elem)
-		*header = NULL;
-}
-*/
-
 void
 list_remove(list_t *elm)
 {
@@ -174,52 +145,3 @@ list_empty(const list_t *header)
 {
 	return header->next == header;
 }
-
-
-
-/* int main(int argc, char *argv[]) */
-/* { */
-/*	struct int_list { */
-/*		list_t node; */
-/*		int elem; */
-/*	}; */
-
-/*	struct int_list head; */
-/*	struct int_list head1; */
-/*	struct int_list a = { */
-/*		.elem = 1 */
-/*	}; */
-/*	struct int_list b = { */
-/*		.elem = 2 */
-/*	}; */
-/*	struct int_list c = { */
-/*		.elem = 3 */
-/*	}; */
-/*	struct int_list d = { */
-/*		.elem = 4 */
-/*	}; */
-/*	list_init(&head.node); */
-/*	list_init(&head1.node); */
-/*	printf("head0 is empty? %d\n", list_empty(&head.node)); */
-/*	printf("head1 length? %d\n", list_length(&head1.node)); */
-/*	list_insert(&head.node, &a.node); //working */
-/*	list_insert(&head.node, &b.node); */
-/*	list_append(&head1.node, &c.node); //working */
-/*	list_append(&head1.node, &d.node); */
-/*	struct int_list *itr; */
-/*	list_for_each(itr, &head.node, node) { */
-/*		printf("%d\t", itr->elem); */
-/*	} */
-/*	printf("\n"); */
-/*	list_for_each(itr, &head1.node, node) { */
-/*		printf("%d\t", itr->elem); */
-/*	} */
-/*	printf("\n"); */
-/*	list_insert_list(&head.node, &head1.node); */
-/*	list_for_each(itr, &head.node, node) { */
-/*		printf("%d\t", itr->elem); */
-/*	} */
-/*	printf("\n"); */
-
-/*	return 0; */
-/* } */

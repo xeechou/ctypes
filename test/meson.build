@@ -17,3 +17,8 @@ test_hash = executable('ctypes_hash',
 		       ['test_hash.c'],
 		       dependencies: dep_ctypes)
 test('test_ctypes_hash', test_hash)
+
+test_list = executable('ctypes_list',
+			 ['test_list.c'],
+			 dependencies: dep_ctypes)
+test('test_ctypes_list', test_list)

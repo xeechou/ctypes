@@ -90,6 +90,13 @@ void dummy_free(void *addr);
 			     offsetof(__typeof__(*sample), member))
 #endif
 
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define UNUSED_ARG(arg) __attribute__((unused)) arg
+#elif defined(__clang__) && __clang__ >= 3
+#define UNUSED_ARG(arg) __attribute__((unused)) arg
+#else
+#define UNUSED_ARG(arg) arg
+#endif
 
 #ifndef MAX
 #define MAX(a, b) \

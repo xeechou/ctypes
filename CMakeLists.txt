@@ -27,11 +27,11 @@ add_library(ctypes STATIC
   src/os/file.c)
 
 target_include_directories(ctypes
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 #keep the old names for compatibilities
-find_path(CTYPES_INCLUDE_DIR helpers.h
-  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
+find_path(CTYPES_INCLUDE_DIR "ctypes/helpers.h"
+  HINTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(CTYPES_LIBRARIES ctypes CACHE STRING "ctypes library")
 
 add_subdirectory(test)

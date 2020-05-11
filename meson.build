@@ -40,12 +40,12 @@ lib_ctypes = static_library(
   'ctypes',
   ctypes_srcs,
   c_args : global_args,
-  include_directories: include_directories('src'),
+  include_directories: include_directories('include'),
 )
 
 dep_ctypes = declare_dependency(
   link_with : lib_ctypes,
-  include_directories : include_directories('src'),
+  include_directories : include_directories('include'),
   compile_args : global_args
 )
 

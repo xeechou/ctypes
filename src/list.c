@@ -26,7 +26,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "list.h"
+#include <ctypes/list.h>
 
 void
 list_init(list_t *list)

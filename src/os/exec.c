@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Xichen Zhou
+ * Copyright (c) 2020 Xichen Zhou
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
-#include "exec.h"
+#include <ctypes/os/exec.h>
 
 int fork_exec(int argc, char * const argv[])
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Xichen Zhou
+ * Copyright (c) 2020 Xichen Zhou
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -29,7 +29,7 @@
 #include <linux/limits.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include "file.h"
+#include <ctypes/os/file.h>
 
 size_t
 file_read(const char *f, char *mem, int max_size)

@@ -28,10 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "vector.h"
-#include "stack.h"
-#include "tree.h"
-#include "queue.h"
+#include <ctypes/vector.h>
+#include <ctypes/stack.h>
+#include <ctypes/tree.h>
+#include <ctypes/queue.h>
 
 void *
 vtree_container(struct vtree_node *p)

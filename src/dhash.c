@@ -25,7 +25,7 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include "hash.h"
+#include <ctypes/hash.h>
 
 static uint64_t
 next_prime(uint64_t n)

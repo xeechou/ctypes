@@ -1,4 +1,4 @@
-#include <list.h>
+#include <ctypes/list.h>
 
 int main(int argc, char *argv[])
 {

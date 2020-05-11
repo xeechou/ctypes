@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../src/helpers.h"
-#include "../src/tree.h"
+#include <ctypes/helpers.h>
+#include <ctypes/tree.h>
 
 
 struct test_tree {

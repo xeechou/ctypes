@@ -29,8 +29,8 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "helpers.h"
-#include "vector.h"
+#include <ctypes/helpers.h>
+#include <ctypes/vector.h>
 
 /* A C vector is just a growing array, since we can index it,
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Xichen Zhou
+ * Copyright (c) 2020 Xichen Zhou
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -34,9 +34,9 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "../list.h"
+#include <ctypes/list.h>
+#include <ctypes/os/buffer.h>
 #include "os-compatibility.h"
-#include "buffer.h"
 
 int
 anonymous_buff_new(struct anonymous_buff_t *buff, off_t size, int prot, int flags)

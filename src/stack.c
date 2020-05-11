@@ -26,8 +26,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stddef.h>
-#include "vector.h"
-#include "stack.h"
+#include <ctypes/vector.h>
+#include <ctypes/stack.h>
 
 void
 cstack_init(cstack_t *cstack, size_t esize, void (*free_func)(void *))

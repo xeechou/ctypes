@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <hash.h>
+#include <ctypes/hash.h>
 
 
 /**

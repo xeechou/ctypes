@@ -26,8 +26,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stddef.h>
-#include "vector.h"
-#include "queue.h"
+#include <ctypes/vector.h>
+#include <ctypes/queue.h>
 
 void
 queue_init(queue_t *queue, size_t esize, void (*free_func)(void *))

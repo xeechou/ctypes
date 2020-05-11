@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../src/helpers.h"
+#include <ctypes/helpers.h>
 //#include <helpers.h>
 
 int main(int argc, char *argv[])

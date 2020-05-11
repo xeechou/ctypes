@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../src/vector.h"
+#include <ctypes/vector.h>
 
 
 int main(int argc, char *argv[argc])

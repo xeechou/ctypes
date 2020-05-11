@@ -36,7 +36,7 @@
 
 #include <ctypes/list.h>
 #include <ctypes/os/buffer.h>
-#include "os-compatibility.h"
+#include <ctypes/os/os-compatibility.h>
 
 int
 anonymous_buff_new(struct anonymous_buff_t *buff, off_t size, int prot, int flags)

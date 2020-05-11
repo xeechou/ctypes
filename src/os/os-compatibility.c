@@ -1,6 +1,7 @@
 /*
  * Copyright © 2012 Collabora, Ltd.
- *
+ * Copyright (c) 2020 xichen zhou.
+*
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that copyright
@@ -32,7 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "os-compatibility.h"
+#include <ctypes/os/os-compatibility.h>
 
 static int
 set_cloexec_or_close(int fd)

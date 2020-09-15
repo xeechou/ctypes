@@ -168,7 +168,7 @@ void dummy_free(void *addr);
 #ifndef OPTION
 /* option directive give us ability to define types like std::option */
 #define OPTION(type, name) \
-	struct tw_option_ ## name { bool valid; type name; }
+	struct _ct_option_ ## name { bool valid; type name; }
 #endif
 
 /* get rid of annoying assert unsued variables */

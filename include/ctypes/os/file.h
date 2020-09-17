@@ -44,28 +44,31 @@ bool is_dir_empty(DIR *dir);
 
 int mkdir_p(const char *path, mode_t mode);
 
+bool
+find_executable(const char *exe, char *fullpath, unsigned max_len);
+
 static inline bool
 is_file_exist(const char *abs_path)
 {
-	FILE *f;
-	if ((f = fopen(abs_path, "r")) != NULL) {
-		fclose(f);
-		return true;
-	}
-	errno = 0;
-	return false;
+	struct stat st;
+
+	if (stat(abs_path, &st) < 0)
+		return false;
+	if (!S_ISREG(st.st_mode))
+		return false;
+	return true;
 }
 
 static inline bool
 is_dir_exist(const char *abs_path)
 {
-	DIR *d;
-	if ((d = opendir(abs_path)) != NULL) {
-		closedir(d);
-		return true;
-	}
-	errno = 0;
-	return false;
+	struct stat st;
+
+	if (stat(abs_path, &st) < 0)
+		return false;
+	if (!S_ISDIR(st.st_mode))
+		return false;
+	return true;
 }
 
 static inline bool
@@ -96,19 +99,46 @@ static inline char *
 path_concat(char *path, int max_len, int narg, ...)
 {
 	va_list ap;
+	char *ret = path;
 
 	va_start(ap, narg);
 	for (int i = narg; i > 0; i--) {
-		if (strlen(path) >= (unsigned)max_len)
-			break;
 		const char *node =
 			va_arg(ap, const char *);
+		if (strlen(path) + strlen(node) >= (unsigned)max_len-2) {
+			ret = NULL;
+			break;
+		}
 		strcat(path, "/");
 		strcat(path, node);
 	}
 	va_end(ap);
-	return path;
+	return ret;
 }
 
+static inline char *
+path_join(char *path, int max_len, int narg, ...)
+{
+	va_list ap;
+	char *ret = path;
+
+	va_start(ap, narg);
+	for (int i = narg; i > 0; i--) {
+		const char *node =
+			va_arg(ap, const char *);
+		if (strlen(path) + strlen(node) >= (unsigned)max_len-2) {
+			ret = NULL;
+			break;
+		}
+		if (i == narg) {
+			strcpy(path, node);
+		} else {
+			strcat(path, "/");
+			strcat(path, node);
+		}
+	}
+	va_end(ap);
+	return ret;
+}
 
 #endif

@@ -24,6 +24,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <linux/limits.h>
@@ -101,4 +102,31 @@ int mkdir_p(const char *path, mode_t mode)
 			return -1;
 	}
 	return 0;
+}
+
+bool
+find_executable(const char *exe, char *fullpath, unsigned max_len)
+{
+	char *PATH;
+	struct stat st = {0};
+	bool found = false;
+
+	if (realpath(exe, fullpath)) {
+		if ((stat(fullpath, &st) == 0) && (st.st_mode & S_IEXEC))
+			return true;
+	}
+
+	PATH = strdup(getenv("PATH"));
+	for (char *path = strtok(PATH, ":"); path;
+	     path = strtok(NULL, ":")) {
+		path_join(fullpath, max_len, 2, path, exe);
+		if (stat(fullpath, &st) < 0)
+			continue;
+		if (st.st_mode & S_IEXEC) {
+			found = true;
+			break;
+		}
+	}
+	free(PATH);
+	return found;
 }

@@ -27,7 +27,6 @@
 #define CTYPES_STACK_H
 
 //this is not stack, this is a queue
-#include <pthread.h>
 #include "vector.h"
 
 #ifdef __cplusplus

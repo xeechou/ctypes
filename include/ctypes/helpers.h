@@ -173,7 +173,7 @@ void dummy_free(void *addr);
 
 /* get rid of annoying assert unsued variables */
 #ifdef NDEBUG
-#define ASSERT(x) do { if(!(x));} while (0)
+#define ASSERT(x) do { if(!(x)) {};} while (0)
 #else
 #define ASSERT(x) assert(x)
 #endif

@@ -43,7 +43,7 @@ file_read(const char *f, char *mem, int max_size)
 	size_t _size = ((unsigned)max_size > size+1) ?
 		size : (unsigned)max_size - 1;
 	if (mem)
-		fread(mem, sizeof(char), _size, stream);
+		_size = fread(mem, sizeof(char), _size, stream);
 	mem[_size] = '\0';
 	fseek(stream, cr, SEEK_SET);
 	fclose(stream);

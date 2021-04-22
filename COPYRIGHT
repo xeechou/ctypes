@@ -11,6 +11,12 @@ Copyright: 2019-2021 Xichen Zhou
 License: MIT/Expat
 
 -------------------------------------------------------------------------------
+Files: src/os/os-compatibility.c
+       include/os/os-compatibility.h
+Copyright: Copyright © 2012 Collabora, Ltd.
+License: MIT/Expat
+
+-------------------------------------------------------------------------------
 Files: src/radix/radix.c
        include/ctypes/radix.h
 Copyright: 2017 Salvatore Sanfilippo
@@ -38,3 +44,4 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+

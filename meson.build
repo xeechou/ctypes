@@ -23,6 +23,8 @@ foreach a : global_args_maybe
   endif
 endforeach
 
+dep_m = cc.find_library('m')
+
 ctypes_srcs = [
   'src/list.c',
   'src/vector.c',
@@ -30,6 +32,7 @@ ctypes_srcs = [
   'src/stack.c',
   'src/dhash.c',
   'src/queue.c',
+  'src/radix/radix.c',
   'src/os/buffer.c',
   'src/os/os-compatibility.c',
   'src/os/exec.c',
@@ -40,6 +43,7 @@ lib_ctypes = static_library(
   'ctypes',
   ctypes_srcs,
   c_args : global_args,
+  dependencies : [dep_m],
   include_directories: include_directories('include'),
 )
 

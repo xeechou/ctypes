@@ -20,6 +20,7 @@ add_library(ctypes STATIC
   src/stack.c
   src/dhash.c
   src/queue.c
+  src/radix/radix.c
 
   src/os/buffer.c
   src/os/os-compatibility.c
@@ -28,6 +29,7 @@ add_library(ctypes STATIC
 
 target_include_directories(ctypes
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(ctypes PUBLIC m)
 
 #keep the old names for compatibilities
 find_path(CTYPES_INCLUDE_DIR "ctypes/helpers.h"
